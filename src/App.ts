@@ -3,7 +3,7 @@ import * as express from 'express';
 import * as logger from 'morgan';
 import * as bodyParser from 'body-parser';
 
-import ExpressOAuthServer = require("express-oauth-server");
+import ExpressOAuthServer = require('node-oauth2-server');
 import { OAuthModel } from './oauth.model';
 
 //var jwt = require('express-jwt');

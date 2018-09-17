@@ -8,7 +8,7 @@ import { RequestHandler } from "express-serve-static-core";
 export class RouterSetup {
   protected logger = new Logger(__filename);
 
-  constructor(private express: express.Application) {}
+  constructor(private express: any) {}
 
   configure() {
     let router = express.Router();
@@ -17,10 +17,11 @@ export class RouterSetup {
     this.express.use('/', router);
     //this.express.use('/auth', AuthorisationRouter);
 
-  router.post('/auth/token', (req: Request, res: Response, next: NextFunction) => this.getToken(req, res, next));
+  router.post('/auth/token', this.express.oauth.grant() ,(req: Request, res: Response, next: NextFunction) => this.getToken(req, res, next));
   }
 
   public getToken(req: Request, res: Response, next: NextFunction) {
-    this.express['oauth'].server.token();
+    this.express.oauth.grant();
+    this.express['oauth'].server.token(req, res);
    }
 }

@@ -22,7 +22,7 @@ export class AuthorisationRouter {
 
   public getToken(req: Request, res: Response)  {
    const expressApp: any =  require('express');
-   expressApp['oauth'].grant();
+  
   }
 
   
