@@ -16,8 +16,20 @@ export class OAuthModel implements PasswordModel {
     // Required for Password Grant
     getClient(clientId: string, clientSecret: string, callback?: Callback<false | "" | 0 | Client>): Promise<Client | any> {
        
+        var client: Client = {
+            id: 'TestClient',
+            grants: ['password']
+        };
+        callback(false, client);
         return null;
     }
+
+    grantTypeAllowed(clientID, grantType, callback) {
+
+        console.log('grantTypeAllowed called and clientID is: ', clientID, ' and grantType is: ', grantType);
+      
+        callback(false, true);
+      }
 
     // Required for Password Grant
     getUser(username: string, password: string, callback?: Callback<false | "" | 0 | User>): Promise<false | "" | 0 | User> {

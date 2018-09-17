@@ -24,7 +24,8 @@ class App {
     // Set oauth to be Our Implemenation
     const oauthModel = new OAuthModel();
     this.express.oauth = new ExpressOAuthServer({
-      model: oauthModel
+      model: oauthModel,
+      grants: ['password']
     })
 
     this.middleware();
