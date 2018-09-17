@@ -33,7 +33,15 @@ export class OAuthModel implements PasswordModel {
 
     // Required for Password Grant
     getUser(username: string, password: string, callback?: Callback<false | "" | 0 | User>): Promise<false | "" | 0 | User> {
-        throw new Error("Method not implemented.");
+        
+        console.log('getUser() called and username is: ', username, ' and password is: ', password, ' and callback is: ', callback);
+
+        callback(false,{
+            id: 'dbaines',
+            email: 'dbaines1@hotmail.com',
+            roles: ['user', 'admin']
+        });
+        return null;
     }
 
     // Required for Password Grant
