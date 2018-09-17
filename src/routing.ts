@@ -21,7 +21,6 @@ export class RouterSetup {
   }
 
   public getToken(req: Request, res: Response, next: NextFunction) {
-    this.express.oauth.grant();
-    this.express['oauth'].server.token(req, res);
+    next();
    }
 }

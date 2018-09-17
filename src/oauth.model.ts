@@ -49,6 +49,16 @@ export class OAuthModel implements PasswordModel {
         throw new Error("Method not implemented.");
     }
 
+   /* saves the accessToken along with the userID retrieved the specified user */
+     saveAccessToken(accessToken, clientID, expires, user, callback){
+
+    console.log('saveAccessToken() called and accessToken is: ', accessToken,
+    ' and clientID is: ',clientID, ' and user is: ', user)
+  
+      //save the accessToken along with the user.id
+      callback(false, null);
+  }
+
     // Required for Password Grant  
     validateScope?(user: User, client: Client, scope: string, callback?: Callback<string | false | 0>): Promise<string | false | 0> {
         throw new Error("Method not implemented.");
