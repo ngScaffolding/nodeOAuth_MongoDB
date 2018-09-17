@@ -19,9 +19,9 @@
     normalize-path "^2.0.1"
     through2 "^2.0.3"
 
-"@ngscaffolding/models@^1.0.18":
-  version "1.0.20"
-  resolved "https://registry.yarnpkg.com/@ngscaffolding/models/-/models-1.0.20.tgz#c45269f82365cedfa1195c7ab9cb531d932b42ca"
+"@ngscaffolding/models@^1.0.23":
+  version "1.0.24"
+  resolved "https://registry.yarnpkg.com/@ngscaffolding/models/-/models-1.0.24.tgz#d05a6d9eda9ee28dfa6e5f1efaa10b187b32b51e"
 
 "@types/body-parser@*", "@types/body-parser@^1.17.0":
   version "1.17.0"
