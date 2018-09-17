@@ -2,7 +2,8 @@ import * as fs from 'fs';
 import { join } from 'path';
 import { ConnectionOptions } from 'mongoose';
 
-import { OAuthClientsModel }  from './clients.model';
+import { IOAuthTokensModel, OAuthTokensModel } from './tokens.model';
+import { IOAuthUsersModel, OAuthUsersModel } from './users.model';
 
 require('dotenv').config();
 const mongoose = require('mongoose');
@@ -72,7 +73,7 @@ export class Database {
     }
 
    
-    public async getUserFromToken(token: string): Promise<OAut> {
+    public async getUserFromToken(token: string): Promise<IOAuthUsersModel> {
         return null;
     }
 

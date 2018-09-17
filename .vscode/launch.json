@@ -8,7 +8,7 @@
         {
             "type": "node",
             "request": "attach",
-            "name": "Attach",
+            "name": "Attach OAuth",
             "port": 9229,
             "sourceMaps": true,
             "outFiles": [
@@ -18,7 +18,7 @@
         {
             "type": "node",
 			"request": "launch",
-			"name": "Launch Program",
+			"name": "Launch Program OAuth",
 			"program": "${workspaceRoot}/dist/index.js",
 			"preLaunchTask": "npm: build",
 			"outFiles": [

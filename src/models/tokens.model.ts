@@ -3,6 +3,17 @@ import { ErrorModel } from '@ngscaffolding/models';
 
 const mongoose = require('mongoose');
 
+export interface IOAuthTokensModel extends Document {
+  accessToken: string,
+  accessTokenExpiresOn: Date,
+  client : object,
+  clientId: string,
+  refreshToken: string,
+  refreshTokenExpiresOn:  Date,
+  user : object,
+  userId: string
+}
+
 const OAuthTokensSchema = new Schema({
     accessToken: { type: String },
     accessTokenExpiresOn: { type: Date },

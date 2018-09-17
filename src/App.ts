@@ -2,22 +2,31 @@ import * as path from 'path';
 import * as express from 'express';
 import * as logger from 'morgan';
 import * as bodyParser from 'body-parser';
-import authoriseRequest from './auth/authoriseRequest';
 
-var jwt = require('express-jwt');
+import ExpressOAuthServer = require("express-oauth-server");
+import { OAuthModel } from './oauth.model';
+
+//var jwt = require('express-jwt');
 var cors = require('cors')
 
-import { RouterSetup } from './routes/routing';
+import { RouterSetup } from './routing';
 
 // Creates and configures an ExpressJS web server.
 class App {
 
   // ref to Express instance
-  public express: express.Application;
+  public express: any; //express.Application;
 
   //Run configuration methods on the Express instance.
   constructor() {
     this.express = express();
+
+    // Set oauth to be Our Implemenation
+    const oauthModel = new OAuthModel();
+    this.express.oauth = new ExpressOAuthServer({
+      model: oauthModel
+    })
+
     this.middleware();
 
    let router = new RouterSetup(this.express);
@@ -36,7 +45,6 @@ class App {
     this.express.use(logger('dev'));
     this.express.use(bodyParser.json());
     this.express.use(cors())
-    this.express.use(authoriseRequest);
     this.express.use(bodyParser.urlencoded({ extended: false }));
   }
 }
