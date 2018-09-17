@@ -1,17 +1,16 @@
 import { ExtensionModel, BaseModel, Client, User, Callback, Token, PasswordModel } from 'oauth2-server';
+import { Request } from 'express';
 import { DB } from './models/database.mongodb';
+var JWT = require('jsonwebtoken');
 
 export class OAuthModel implements PasswordModel {
 
-    // Optional for Password Grant
-    // generateAccessToken?(client: Client, user: User, scope: string, callback?: Callback<any>): Promise<any> {
-    //     throw new Error("Method not implemented.");
-    // }    
+    private JWT_ISSUER = 'ngScaffolding';
+    private JWT_SECRET_FOR_ACCESS_TOKEN = 'XT6PRpRuehFsyMa2';
+    private JWT_SECRET_FOR_REFRESH_TOKEN = 'JWPVzFWkqGxoE2C2';
 
-    // Optional for Password Grant
-    // generateRefreshToken?(client: Client, user: User, scope: string, callback?: Callback<string>): Promise<string> {
-    //     throw new Error("Method not implemented.");
-    // }
+    public JWT_ACCESS_TOKEN_EXPIRY_SECONDS = 1800;             // 30 minutes
+    public JWT_REFRESH_TOKEN_EXPIRY_SECONDS = 1209600;         // 14 days
 
     // Required for Password Grant
     getClient(clientId: string, clientSecret: string, callback?: Callback<false | "" | 0 | Client>): Promise<Client | any> {
@@ -72,4 +71,40 @@ export class OAuthModel implements PasswordModel {
     verifyScope(token: Token, scope: string, callback?: Callback<boolean>): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
+
+    // generateToken
+    // This generateToken implementation generates a token with JWT.
+    // the token output is the Base64 encoded string.
+    generateToken = function(type: string, req: any, callback: Callback<string>) {
+    var token;
+    var secret;
+    var user = req.user;
+    var exp = new Date();
+    var payload = {
+      // public claims
+      iss: this.JWT_ISSUER,   // issuer
+  //    exp: exp,        // the expiry date is set below - expiry depends on type
+  //    jti: '',         // unique id for this token - needed if we keep an store of issued tokens?
+      // private claims
+      userId: user.id,
+      roles: user.roles,
+      exp: null
+    };
+    var options = {
+      // algorithms: ['HS256']  // HMAC using SHA-256 hash algorithm
+    };
+  
+    if (type === 'accessToken') {
+      secret = this.JWT_SECRET_FOR_ACCESS_TOKEN;
+      exp.setSeconds(exp.getSeconds() + this.JWT_ACCESS_TOKEN_EXPIRY_SECONDS);
+    } else {
+      secret = this.JWT_SECRET_FOR_REFRESH_TOKEN;
+      exp.setSeconds(exp.getSeconds() + this.JWT_REFRESH_TOKEN_EXPIRY_SECONDS);
+    }
+    payload.exp = exp.getTime();
+
+    token = JWT.sign(payload, secret, options);
+  
+    callback(false, token);
+  };
 }
