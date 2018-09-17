@@ -45,27 +45,65 @@ export class OAuthModel implements PasswordModel {
 
     // Required for Password Grant
     saveToken(token: Token, client: Client, user: User, callback?: Callback<any>): Promise<any> {
-        throw new Error("Method not implemented.");
+        callback(false, null);
+        return null;
     }
 
-   /* saves the accessToken along with the userID retrieved the specified user */
-     saveAccessToken(accessToken, clientID, expires, user, callback){
+    // As we're using JWT there's no need to store the token after it's generated
+    saveAccessToken(accessToken, clientID, expires, user, callback){
+        callback(false, null);
+    }
 
-    console.log('saveAccessToken() called and accessToken is: ', accessToken,
-    ' and clientID is: ',clientID, ' and user is: ', user)
-  
-      //save the accessToken along with the user.id
-      callback(false, null);
-  }
+    // As we're using JWT there's no need to store the token after it's generated
+    saveRefreshToken(refreshToken, clientID, expires, userId, callback){
+        callback(false, null);
+    }
 
     // Required for Password Grant  
     validateScope?(user: User, client: Client, scope: string, callback?: Callback<string | false | 0>): Promise<string | false | 0> {
         throw new Error("Method not implemented.");
     }
     
+    // The bearer token is a JWT, so we decrypt and verify it. We get a reference to the
+    // user in this function which oauth2-server puts into the req object
+    getRefreshToken = function (bearerToken, callback) {
+    return JWT.verify(bearerToken, this.JWT_SECRET_FOR_REFRESH_TOKEN, function(err, decoded) {
+  
+      if (err) {
+        return callback(err, false);
+      }
+  
+      // other verifications could be performed here
+      // eg. that the jti is valid
+  
+      // instead of passing the payload straight out we use an object with the
+      // mandatory keys expected by oauth2-server plus any other private
+      // claims that are useful
+      return callback(false, {
+        expires: new Date(decoded.exp),
+        user: null // getUserById(decoded.userId)
+      });
+    });
+  };
 
-    getAccessToken(accessToken: string, callback?: Callback<Token>): Promise<Token> {
-        throw new Error("Method not implemented.");
+    getAccessToken(accessToken: string, callback?: Callback<Token | any>): Promise<Token> {
+        return JWT.verify(accessToken, this.JWT_SECRET_FOR_ACCESS_TOKEN, function(err, decoded) {
+
+            if (err) {
+              return callback(err, false);   // the err contains JWT error data
+            }
+        
+            // other verifications could be performed here
+            // eg. that the jti is valid
+        
+            // we could pass the payload straight out we use an object with the
+            // mandatory keys expected by oauth2-server, plus any other private
+            // claims that are useful
+            return callback(false, {
+              expires: new Date(decoded.exp),
+              user: null // getUserById(decoded.userId)
+            });
+          });
     }
     
     verifyScope(token: Token, scope: string, callback?: Callback<boolean>): Promise<boolean> {
