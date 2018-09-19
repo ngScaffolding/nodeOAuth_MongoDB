@@ -6,7 +6,6 @@ import * as bodyParser from 'body-parser';
 import ExpressOAuthServer = require('node-oauth2-server');
 import { OAuthModel } from './oauth.model';
 
-//var jwt = require('express-jwt');
 var cors = require('cors')
 
 import { RouterSetup } from './routing';
@@ -36,13 +35,6 @@ class App {
 
   // Configure Express middleware.
   private middleware(): void {
-    // var jwtCheck = jwt({
-    //   secret: process.env.OAUTH_SECRET
-    // });
-    
-    // Enable the use of the jwtCheck middleware in all of our routes
-    // this.express.use(jwtCheck);
-
     this.express.use(logger('dev'));
     this.express.use(bodyParser.json());
     this.express.use(cors())

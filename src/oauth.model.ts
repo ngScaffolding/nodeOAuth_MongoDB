@@ -15,11 +15,18 @@ export class OAuthModel implements PasswordModel {
     // Required for Password Grant
     getClient(clientId: string, clientSecret: string, callback?: Callback<false | "" | 0 | Client>): Promise<Client | any> {
        
-        var client: Client = {
-            id: 'TestClient',
-            grants: ['password']
-        };
-        callback(false, client);
+        DB.getClientFromID(clientId, clientSecret)
+        .then(client=>{
+            if(client){
+                callback(false, client as Client);
+            } else {
+                callback(true);
+            }
+        })
+        .catch(err=>{
+            callback(err);
+        });
+               
         return null;
     }
 

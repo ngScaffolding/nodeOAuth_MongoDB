@@ -4,6 +4,7 @@ import { ConnectionOptions } from 'mongoose';
 
 import { IOAuthTokensModel, OAuthTokensModel } from './tokens.model';
 import { IOAuthUsersModel, OAuthUsersModel } from './users.model';
+import { IOAuthClientModel, OAuthClientModel } from './clients.model';
 
 require('dotenv').config();
 const mongoose = require('mongoose');
@@ -72,11 +73,20 @@ export class Database {
         return typeof Database.instance != 'undefined';
     }
 
+    // //////////////////////////////////////////////////////////////////
+    //
+    // Client Section
+    // 
+    // //////////////////////////////////////////////////////////////////
    
-    public async getUserFromToken(token: string): Promise<IOAuthUsersModel> {
-        return null;
+    public async getClientFromID(clientId: string, clientSecret: string = null): Promise<IOAuthClientModel> {
+        if(clientSecret){
+            return await OAuthClientModel.findOne({ clientId: clientId, clientSecret: clientSecret });
+        } else
+        {
+            return await OAuthClientModel.findOne({ clientId: clientId });
+        }
     }
-
 }
 
 export const DB = Database.instance;
