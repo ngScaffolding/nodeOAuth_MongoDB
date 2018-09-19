@@ -1,23 +1,32 @@
 import { Document, Schema } from 'mongoose';
+import { BasicUser } from '@ngscaffolding/models';
 
 const mongoose = require('mongoose');
 
-export interface IOAuthUsersModel extends Document {
-    email: string,
-    firstname: string,
-    lastname: string,
-    password: string,
-    username: string,
-    roles: string[]
+export interface IOAuthUsersModel extends BasicUser, Document {
+    salt: string;
+    password: string;
+    expires: Date;
+    passwordFailures: number;
+    passwordLastFailed: number;
+    changeNextLogon: boolean;
 }
 
-const OAuthUsersSchema = new Schema({
+const OAuthUserSchema = new Schema({
+    userId: String,
     email: { type: String, default: '' },
+    name: { type: String },
     firstname: { type: String },
     lastname: { type: String },
+     
+    roles: [String],
+
     password: { type: String },
-    username: { type: String },
-    roles: [String]
+    salt: String,
+    expires: Date,
+    passwordFailures: Number,
+    passwordLastFailed: Number,
+    changeNextLogon: Boolean
   });
 
-  export let OAuthUsersModel = mongoose.model('OAuthUsersSchema', OAuthUsersSchema);
+  export let OAuthUserModel = mongoose.model('OAuthUser', OAuthUserSchema);

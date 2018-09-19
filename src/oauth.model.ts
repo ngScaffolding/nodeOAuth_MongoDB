@@ -1,6 +1,7 @@
 import { ExtensionModel, BaseModel, Client, User, Callback, Token, PasswordModel } from 'oauth2-server';
 import { Request } from 'express';
 import { DB } from './models/database.mongodb';
+import { PasswordHelper } from './password.helper';
 var JWT = require('jsonwebtoken');
 
 export class OAuthModel implements PasswordModel {
@@ -40,13 +41,25 @@ export class OAuthModel implements PasswordModel {
     // Required for Password Grant
     getUser(username: string, password: string, callback?: Callback<false | "" | 0 | User>): Promise<false | "" | 0 | User> {
         
-        console.log('getUser() called and username is: ', username, ' and password is: ', password, ' and callback is: ', callback);
+        console.log('getUser() called and username is: ', username);
 
-        callback(false,{
-            id: 'dbaines',
-            email: 'dbaines1@hotmail.com',
-            roles: ['user', 'admin']
+        DB.getUserFromID(username)
+        .then(user => {
+            if(!user) { callback(true); }
+
+            // Compare entered password to salted saved
+            let encPassword = PasswordHelper.encodePassword(password, user.salt);
+
+            if(encPassword !== user.password) {
+                callback('User name and Password not recognised');
+            } else {
+                callback(false, user as User);
+            }
+        })
+        .catch(err => {
+            callback(err);
         });
+
         return null;
     }
 

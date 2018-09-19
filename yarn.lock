@@ -20,8 +20,8 @@
     through2 "^2.0.3"
 
 "@ngscaffolding/models@^1.0.23":
-  version "1.0.24"
-  resolved "https://registry.yarnpkg.com/@ngscaffolding/models/-/models-1.0.24.tgz#d05a6d9eda9ee28dfa6e5f1efaa10b187b32b51e"
+  version "1.0.25"
+  resolved "https://registry.yarnpkg.com/@ngscaffolding/models/-/models-1.0.25.tgz#cb4076633836ee4767bb3fe9ce93a1cc25803ed1"
 
 "@types/body-parser@*", "@types/body-parser@^1.17.0":
   version "1.17.0"

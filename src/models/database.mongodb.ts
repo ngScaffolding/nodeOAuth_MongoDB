@@ -3,7 +3,7 @@ import { join } from 'path';
 import { ConnectionOptions } from 'mongoose';
 
 import { IOAuthTokensModel, OAuthTokensModel } from './tokens.model';
-import { IOAuthUsersModel, OAuthUsersModel } from './users.model';
+import { IOAuthUsersModel, OAuthUserModel } from './users.model';
 import { IOAuthClientModel, OAuthClientModel } from './clients.model';
 
 require('dotenv').config();
@@ -86,6 +86,17 @@ export class Database {
         {
             return await OAuthClientModel.findOne({ clientId: clientId });
         }
+    }
+
+    // //////////////////////////////////////////////////////////////////
+    //
+    // User Section
+    // 
+    // //////////////////////////////////////////////////////////////////
+   
+    public async getUserFromID(userId: string, password: string = null): Promise<IOAuthUsersModel> {
+        
+        return await OAuthUserModel.findOne({userId: userId});
     }
 }
 
