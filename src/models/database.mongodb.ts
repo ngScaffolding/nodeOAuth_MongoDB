@@ -98,6 +98,21 @@ export class Database {
         
         return await OAuthUserModel.findOne({userId: userId});
     }
+
+    // Fire and forget
+    public async userLoggedOn(IOAuthUsersModel) {
+        
+        // Reset passwordFailures
+        // Reset passwordLastFailed
+
+        //return await OAuthUserModel.findOne({userId: userId});
+    }
+
+    // Fire and forget
+    public async userLogonFailed(userId: string) {
+        // Increment passwordFailures
+        // Set passwordLastFailed
+    }
 }
 
 export const DB = Database.instance;
