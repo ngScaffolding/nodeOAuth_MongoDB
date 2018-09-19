@@ -51,8 +51,10 @@ export class OAuthModel implements PasswordModel {
             let encPassword = PasswordHelper.encodePassword(password, user.salt);
 
             if(encPassword !== user.password) {
+                DB.userLogonFailed(username);
                 callback('User name and Password not recognised');
             } else {
+                DB.userLoggedOn(username);
                 callback(false, user as User);
             }
         })

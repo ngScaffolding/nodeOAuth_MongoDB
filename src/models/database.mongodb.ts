@@ -100,18 +100,31 @@ export class Database {
     }
 
     // Fire and forget
-    public async userLoggedOn(IOAuthUsersModel) {
+    public async userLoggedOn(userId: string) {
         
         // Reset passwordFailures
         // Reset passwordLastFailed
 
-        //return await OAuthUserModel.findOne({userId: userId});
+        OAuthUserModel.findOneAndUpdate({userId: userId},
+             {passwordFailures: 0, passwordLastFailed: null },{},(error,doc) => {
+        });
     }
 
     // Fire and forget
     public async userLogonFailed(userId: string) {
         // Increment passwordFailures
         // Set passwordLastFailed
+        
+        let user = OAuthUserModel.findOne({userId: userId})
+        if(!user.passwordFailures){ user.passwordFailures = 0; }
+
+        let update = {
+            passwordFailures: user.passwordFailures + 1,
+            passwordLastFailed: new Date()
+        };
+
+        OAuthUserModel.findOneAndUpdate(user, update,{},(error,doc) => {
+       });
     }
 }
 
