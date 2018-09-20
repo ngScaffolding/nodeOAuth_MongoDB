@@ -1,14 +1,9 @@
 import { Document, Schema } from 'mongoose';
+import { IClientModel } from '../../../models/IClient.model';
 
 const mongoose = require('mongoose');
 
-export interface IOAuthClientModel extends Document {
-  clientId: string;
-  redirectUris?: string[];
-  grants: string[];
-  accessTokenLifetime?: number;
-  refreshTokenLifetime?: number;
-  [key: string]: any;
+export interface IOAuthClientModel extends IClientModel, Document {
 }
 
 const OAuthClientSchema = new Schema({

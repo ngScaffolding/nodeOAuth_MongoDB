@@ -1,17 +1,9 @@
 import { Document, Schema } from 'mongoose';
-import { ErrorModel } from '@ngscaffolding/models';
+import { ITokenModel } from '../../../models/IToken.model';
 
 const mongoose = require('mongoose');
 
-export interface IOAuthTokensModel extends Document {
-  accessToken: string,
-  accessTokenExpiresOn: Date,
-  client : object,
-  clientId: string,
-  refreshToken: string,
-  refreshTokenExpiresOn:  Date,
-  user : object,
-  userId: string
+export interface IOAuthTokensModel extends ITokenModel, Document {
 }
 
 const OAuthTokensSchema = new Schema({

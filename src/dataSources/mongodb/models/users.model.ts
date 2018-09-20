@@ -1,15 +1,10 @@
 import { Document, Schema } from 'mongoose';
 import { BasicUser } from '@ngscaffolding/models';
+import { IUserModel } from '../../../models/IUser.model';
 
 const mongoose = require('mongoose');
 
-export interface IOAuthUsersModel extends BasicUser, Document {
-    salt: string;
-    password: string;
-    expires: Date;
-    passwordFailures: number;
-    passwordLastFailed: number;
-    changeNextLogon: boolean;
+export interface IOAuthUsersModel extends BasicUser, IUserModel , Document {
 }
 
 const OAuthUserSchema = new Schema({
