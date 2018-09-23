@@ -6,10 +6,12 @@ import { IOAuthTokensModel, OAuthTokensModel } from './tokens.model';
 import { IOAuthUsersModel, OAuthUserModel } from './users.model';
 import { IOAuthClientModel, OAuthClientModel } from './clients.model';
 
+import { IClientDataAccess, IUserDataAccess } from '../../dataAccessLayer';
+
 require('dotenv').config();
 const mongoose = require('mongoose');
 
-export class Database {
+export class Database implements IClientDataAccess, IUserDataAccess {
     private static _database: Database;
 
     private constructor() {

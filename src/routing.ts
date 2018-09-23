@@ -2,7 +2,6 @@ import * as express from 'express';
 import { Router, Request, Response, NextFunction } from 'express';
 
 import { Logger } from './logger';
-import AuthorisationRouter from './authorisation.router';
 import { RequestHandler } from "express-serve-static-core";
 
 export class RouterSetup {

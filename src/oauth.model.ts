@@ -1,8 +1,9 @@
 import { ExtensionModel, BaseModel, Client, User, Callback, Token, PasswordModel } from 'oauth2-server';
 import { Request } from 'express';
-import { DB } from './models/database.mongodb';
 import { PasswordHelper } from './password.helper';
+import { IDataAccessLayer } from './dataSources/dataAccessLayer';
 var JWT = require('jsonwebtoken');
+var DataSourceSwitch = require('../../dataSourceSwitch');
 
 export class OAuthModel implements PasswordModel {
 
@@ -15,8 +16,8 @@ export class OAuthModel implements PasswordModel {
 
     // Required for Password Grant
     getClient(clientId: string, clientSecret: string, callback?: Callback<false | "" | 0 | Client>): Promise<Client | any> {
-       
-        DB.getClientFromID(clientId, clientSecret)
+        var dataAccess = DataSourceSwitch.default.dataSource as IDataAccessLayer;
+        dataAccess.clientDataAccess.getClientFromID(clientId)
         .then(client=>{
             if(client){
                 callback(false, client as Client);
@@ -42,8 +43,9 @@ export class OAuthModel implements PasswordModel {
     getUser(username: string, password: string, callback?: Callback<false | "" | 0 | User>): Promise<false | "" | 0 | User> {
         
         console.log('getUser() called and username is: ', username);
-
-        DB.getUserFromID(username)
+        
+        var dataAccess = DataSourceSwitch.default.dataSource as IDataAccessLayer;
+        dataAccess.userDataAccess.getUserFromID(username)
         .then(user => {
             if(!user) { callback(true); }
 
@@ -51,10 +53,10 @@ export class OAuthModel implements PasswordModel {
             let encPassword = PasswordHelper.encodePassword(password, user.salt);
 
             if(encPassword !== user.password) {
-                DB.userLogonFailed(username);
+                dataAccess.userDataAccess.userLogonFailed(username);
                 callback('User name and Password not recognised');
             } else {
-                DB.userLoggedOn(username);
+                dataAccess.userDataAccess.userLoggedOn(username);
                 callback(false, user as User);
             }
         })
