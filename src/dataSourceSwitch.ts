@@ -1,6 +1,6 @@
 import { IDataAccessLayer  } from './dataSources/dataAccessLayer';
 import { MongoDBDataAccess } from './dataSources/mongodb';
-import { DocumentDBDataAccess } from './dataSources/documentdb';
+// import { DocumentDBDataAccess } from './dataSources/documentdb';
 
 require('dotenv').config();
 
@@ -18,7 +18,7 @@ class DataSourceSwitch {
             }
             case 'documentdb':{
                 console.log('Running DocumentDB Data Source');
-                this.dataSource = new DocumentDBDataAccess();
+                // this.dataSource = new DocumentDBDataAccess();
                 break;
             }
             case 'kumulos':{

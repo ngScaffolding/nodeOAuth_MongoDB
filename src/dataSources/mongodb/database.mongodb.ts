@@ -2,11 +2,11 @@ import * as fs from 'fs';
 import { join } from 'path';
 import { ConnectionOptions } from 'mongoose';
 
-import { IOAuthTokensModel, OAuthTokensModel } from './tokens.model';
-import { IOAuthUsersModel, OAuthUserModel } from './users.model';
-import { IOAuthClientModel, OAuthClientModel } from './clients.model';
+import { IOAuthTokensModel, OAuthTokensModel } from './models/tokens.model';
+import { IOAuthUsersModel, OAuthUserModel } from './models/users.model';
+import { IOAuthClientModel, OAuthClientModel } from './models/clients.model';
 
-import { IClientDataAccess, IUserDataAccess } from '../../dataAccessLayer';
+import { IClientDataAccess, IUserDataAccess } from '../dataAccessLayer';
 
 require('dotenv').config();
 const mongoose = require('mongoose');
