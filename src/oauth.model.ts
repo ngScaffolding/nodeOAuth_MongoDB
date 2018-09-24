@@ -5,14 +5,9 @@ import { IDataAccessLayer } from './dataSources/dataAccessLayer';
 var JWT = require('jsonwebtoken');
 var DataSourceSwitch = require('./dataSourceSwitch');
 
-export class OAuthModel implements PasswordModel {
+require('dotenv').config();
 
-    private JWT_ISSUER = 'ngScaffolding';
-    private JWT_SECRET_FOR_ACCESS_TOKEN = 'XT6PRpRuehFsyMa2';
-    private JWT_SECRET_FOR_REFRESH_TOKEN = 'JWPVzFWkqGxoE2C2';
-
-    public JWT_ACCESS_TOKEN_EXPIRY_SECONDS = 1800;             // 30 minutes
-    public JWT_REFRESH_TOKEN_EXPIRY_SECONDS = 1209600;         // 14 days
+export class OAuthModel { //implements PasswordModel {
 
     // Required for Password Grant
     getClient(clientId: string, clientSecret: string, callback?: Callback<false | "" | 0 | Client>): Promise<Client | any> {
@@ -67,6 +62,12 @@ export class OAuthModel implements PasswordModel {
         return null;
     }
 
+    static getUserById(userId: string): Promise<User> {
+        var dataAccess = DataSourceSwitch.default.dataSource as IDataAccessLayer;
+        
+        return dataAccess.getUserFromID(userId);
+    }
+
     // Required for Password Grant
     saveToken(token: Token, client: Client, user: User, callback?: Callback<any>): Promise<any> {
         callback(false, null);
@@ -91,7 +92,7 @@ export class OAuthModel implements PasswordModel {
     // The bearer token is a JWT, so we decrypt and verify it. We get a reference to the
     // user in this function which oauth2-server puts into the req object
     getRefreshToken = function (bearerToken, callback) {
-    return JWT.verify(bearerToken, this.JWT_SECRET_FOR_REFRESH_TOKEN, function(err, decoded) {
+    return JWT.verify(bearerToken,  process.env.JWT_SECRET_FOR_REFRESH_TOKEN, function(err, decoded) {
   
       if (err) {
         return callback(err, false);
@@ -105,13 +106,13 @@ export class OAuthModel implements PasswordModel {
       // claims that are useful
       return callback(false, {
         expires: new Date(decoded.exp),
-        user: null // getUserById(decoded.userId)
+        user: OAuthModel.getUserById(decoded.userId)
       });
     });
   };
 
-    getAccessToken(accessToken: string, callback?: Callback<Token | any>): Promise<Token> {
-        return JWT.verify(accessToken, this.JWT_SECRET_FOR_ACCESS_TOKEN, function(err, decoded) {
+    getAccessToken(accessToken: string, callback?: Callback<Token | any>) {
+        JWT.verify(accessToken,  process.env.JWT_SECRET_FOR_ACCESS_TOKEN, function(err, decoded) {
 
             if (err) {
               return callback(err, false);   // the err contains JWT error data
@@ -123,10 +124,13 @@ export class OAuthModel implements PasswordModel {
             // we could pass the payload straight out we use an object with the
             // mandatory keys expected by oauth2-server, plus any other private
             // claims that are useful
-            return callback(false, {
-              expires: new Date(decoded.exp),
-              user: null // getUserById(decoded.userId)
-            });
+
+            OAuthModel.getUserById(decoded.userId).then(user => {
+                    callback(false, {
+                        expires: new Date(decoded.exp),
+                        user: user
+                        });
+                    });
           });
     }
     
@@ -144,12 +148,14 @@ export class OAuthModel implements PasswordModel {
     var exp = new Date();
     var payload = {
       // public claims
-      iss: this.JWT_ISSUER,   // issuer
-  //    exp: exp,        // the expiry date is set below - expiry depends on type
-  //    jti: '',         // unique id for this token - needed if we keep an store of issued tokens?
+      iss:  process.env.JWT_ISSUER,   // issuer
+  
       // private claims
-      userId: user.id,
+      userId: user.userId,
       roles: user.roles,
+      firstName: user.firstname,
+      lastName: user.lastname,
+      email: user.email,
       exp: null
     };
     var options = {
@@ -157,11 +163,11 @@ export class OAuthModel implements PasswordModel {
     };
   
     if (type === 'accessToken') {
-      secret = this.JWT_SECRET_FOR_ACCESS_TOKEN;
-      exp.setSeconds(exp.getSeconds() + this.JWT_ACCESS_TOKEN_EXPIRY_SECONDS);
+      secret = process.env.JWT_SECRET_FOR_ACCESS_TOKEN;
+      exp.setSeconds(exp.getSeconds() + Number(process.env.JWT_ACCESS_TOKEN_EXPIRY_SECONDS));
     } else {
-      secret = this.JWT_SECRET_FOR_REFRESH_TOKEN;
-      exp.setSeconds(exp.getSeconds() + this.JWT_REFRESH_TOKEN_EXPIRY_SECONDS);
+      secret = process.env.JWT_SECRET_FOR_REFRESH_TOKEN;
+      exp.setSeconds(exp.getSeconds() + Number(process.env.JWT_REFRESH_TOKEN_EXPIRY_SECONDS));
     }
     payload.exp = exp.getTime();
 
