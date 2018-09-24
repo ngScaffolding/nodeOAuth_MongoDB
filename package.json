@@ -8,7 +8,7 @@
     "dev": "tsc-watch --onSuccess \"node dist/index.js\"",
     "debug": "nodemon --inspect dist/index.js",
     "test": "mocha --reporter spec --compilers ts:ts-node/register",
-    "build": "tsc -p ."
+    "build": "tsc -p . & copy .env dist"
   },
   "devDependencies": {
     "@types/body-parser": "^1.17.0",
