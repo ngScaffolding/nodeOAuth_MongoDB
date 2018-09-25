@@ -9,7 +9,7 @@
     "debug": "nodemon --inspect dist/index.js",
     "test": "mocha --reporter spec --compilers ts:ts-node/register",
     "build": "tsc -p . & copy .env dist",
-    "postinstall": "node_modules\typescript\bin\tsc -p"
+    "postinstall": "./node_modules/typescript/bin/tsc -p"
   },
   "devDependencies": {
     "@types/body-parser": "^1.17.0",
