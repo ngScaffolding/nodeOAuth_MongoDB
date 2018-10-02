@@ -30,14 +30,12 @@ export class Database implements IClientDataAccess, IUserDataAccess {
             options.pass = process.env.DB_PASS;
         }
 
-        mongoose
-            .connect(
-                process.env.DB_HOST,
-                options
-            )
-            .catch((err: Error) => {
-                console.error(err, `Error connecting to Mongodb`);
-            });
+        if(process.env.DB_HOST) {
+            mongoose.connect(process.env.DB_HOST,options)
+                .catch((err: Error) => {
+                    console.error(err, `Error connecting to Mongodb`);
+                });
+        }
 
         // When successfully connected
         mongoose.connection.on('connected', () => {

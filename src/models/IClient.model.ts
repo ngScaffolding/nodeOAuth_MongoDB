@@ -1,4 +1,5 @@
 export interface IClientModel {
+    id?: any;
     clientId: string;
     redirectUris?: string[];
     grants: string[];
