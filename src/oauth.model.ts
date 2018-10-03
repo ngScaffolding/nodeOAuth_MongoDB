@@ -12,7 +12,7 @@ export class OAuthModel { //implements PasswordModel {
     // Required for Password Grant
     getClient(clientId: string, clientSecret: string, callback?: Callback<false | "" | 0 | Client>): Promise<Client | any> {
         var dataAccess = DataSourceSwitch.default.dataSource as IDataAccessLayer;
-        dataAccess.getClientFromID(clientId)
+        return dataAccess.getClientFromID(clientId)
         .then(client=>{
             if(client){
                 callback(false, client as Client);
@@ -24,7 +24,7 @@ export class OAuthModel { //implements PasswordModel {
             callback(err);
         });
                
-        return null;
+        // return null;
     }
 
     grantTypeAllowed(clientID, grantType, callback) {

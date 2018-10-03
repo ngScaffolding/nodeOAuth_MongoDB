@@ -1,5 +1,6 @@
 import { IDataAccessLayer  } from './dataSources/dataAccessLayer';
 import { MongoDBDataAccess } from './dataSources/mongodb';
+import { AzureStorageDataAccess } from './dataSources/azureStorage';
 // import { DocumentDBDataAccess } from './dataSources/documentdb';
 
 require('dotenv').config();
@@ -14,6 +15,11 @@ class DataSourceSwitch {
             case 'mongodb':{
                 console.log('Running MongoDB Data Source');
                 this.dataSource = new MongoDBDataAccess();
+                break;
+            }
+            case 'azurestorage':{
+                console.log('Running Azure Storage Data Source');
+                this.dataSource = new AzureStorageDataAccess();
                 break;
             }
             case 'documentdb':{

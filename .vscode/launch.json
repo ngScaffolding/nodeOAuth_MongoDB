@@ -7,16 +7,6 @@
         
         {
             "type": "node",
-            "request": "attach",
-            "name": "Attach OAuth",
-            "port": 9229,
-            "sourceMaps": true,
-            "outFiles": [
-                "${workspaceFolder}/dist/**/*.js"
-            ]
-        },
-        {
-            "type": "node",
 			"request": "launch",
 			"name": "Launch Program OAuth",
 			"program": "${workspaceRoot}/dist/index.js",
