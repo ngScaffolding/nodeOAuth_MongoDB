@@ -7,6 +7,8 @@ debug('ts-express:server');
 
 require("dotenv").config();
 
+var winston = require('./config/winston');
+
 const port = normalizePort(process.env.PORT || 3000);
 App.set('port', port);
 
@@ -27,11 +29,11 @@ function onError(error: NodeJS.ErrnoException): void {
   let bind = (typeof port === 'string') ? 'Pipe ' + port : 'Port ' + port;
   switch(error.code) {
     case 'EACCES':
-      console.error(`${bind} requires elevated privileges`);
+      winston.error(`${bind} requires elevated privileges`);
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      console.error(`${bind} is already in use`);
+      winston.error(`${bind} is already in use`);
       process.exit(1);
       break;
     default:
@@ -42,5 +44,6 @@ function onError(error: NodeJS.ErrnoException): void {
 function onListening(): void {
   let addr = server.address();
   let bind = (typeof addr === 'string') ? `pipe ${addr}` : `port ${addr.port}`;
+  winston.info(`Listening on ${bind}`);
   debug(`Listening on ${bind}`);
 }

@@ -9,6 +9,8 @@ import { IOAuthClientModel, OAuthClientModel } from './models/clients.model';
 import { IClientDataAccess, IUserDataAccess } from '../dataAccessLayer';
 
 require('dotenv').config();
+var winston = require('../../config/winston');
+
 const mongoose = require('mongoose');
 
 export class Database implements IClientDataAccess, IUserDataAccess {
@@ -22,40 +24,40 @@ export class Database implements IClientDataAccess, IUserDataAccess {
         };
 
         if (process.env.DB_PASS) {
-            console.debug(`Setting process.env.DB_USER: ${process.env.DB_USER}`);
+            winston.info(`Setting process.env.DB_USER: ${process.env.DB_USER}`);
             options.user = process.env.DB_USER;
         }
         if (process.env.DB_PASS) {
-            console.debug(`Setting process.env.DB_PASS`);
+            winston.info(`Setting process.env.DB_PASS`);
             options.pass = process.env.DB_PASS;
         }
 
         if(process.env.DB_HOST) {
             mongoose.connect(process.env.DB_HOST,options)
                 .catch((err: Error) => {
-                    console.error(err, `Error connecting to Mongodb`);
+                    winston.error(err, `Error connecting to Mongodb`);
                 });
         }
 
         // When successfully connected
         mongoose.connection.on('connected', () => {
-            console.info('Mongoose default connection open to ', process.env.DB_HOST);
+            winston.info('Mongoose default connection open to ', process.env.DB_HOST);
         });
 
         // If the connection throws an error
         mongoose.connection.on('error', err => {
-            console.error(err, 'Mongoose default connection error: ');
+            winston.error(err, 'Mongoose default connection error: ');
         });
 
         // When the connection is disconnected
         mongoose.connection.on('disconnected', () => {
-            console.error('Mongoose default connection disconnected');
+            winston.error('Mongoose default connection disconnected');
         });
 
         // If the Node process ends, close the Mongoose connection
         process.on('SIGINT', () => {
             mongoose.connection.close(() => {
-                console.info('Mongoose default connection disconnected through app termination');
+                winston.info('Mongoose default connection disconnected through app termination');
                 process.exit(0);
             });
         });
@@ -69,7 +71,7 @@ export class Database implements IClientDataAccess, IUserDataAccess {
     }
 
     initialise(): boolean {
-        console.info('Connecting to Database');
+        winston.info('Connecting to Database');
         return typeof Database.instance != 'undefined';
     }
 

@@ -4,6 +4,7 @@ import { AzureStorageDataAccess } from './dataSources/azureStorage';
 // import { DocumentDBDataAccess } from './dataSources/documentdb';
 
 require('dotenv').config();
+var winston = require('./config/winston');
 
 export interface IDataSourceSwitch{
     dataSource: IDataAccessLayer;
@@ -13,17 +14,17 @@ class DataSourceSwitch {
     constructor() {
         switch(process.env.DATA_SOURCE.toLowerCase()){
             case 'mongodb':{
-                console.log('Running MongoDB Data Source');
+                winston.info('Running MongoDB Data Source');
                 this.dataSource = new MongoDBDataAccess();
                 break;
             }
             case 'azurestorage':{
-                console.log('Running Azure Storage Data Source');
+                winston.log('Running Azure Storage Data Source');
                 this.dataSource = new AzureStorageDataAccess();
                 break;
             }
             case 'documentdb':{
-                console.log('Running DocumentDB Data Source');
+                winston.log('Running DocumentDB Data Source');
                 // this.dataSource = new DocumentDBDataAccess();
                 break;
             }

@@ -1,11 +1,12 @@
 import * as path from 'path';
 import * as express from 'express';
-import * as logger from 'morgan';
+import * as morgan from 'morgan';
 import * as bodyParser from 'body-parser';
 
 import ExpressOAuthServer = require('node-oauth2-server');
 import { OAuthModel } from './oauth.model';
 
+var winston = require('./config/winston');
 var cors = require('cors')
 
 import { RouterSetup } from './routing';
@@ -18,6 +19,7 @@ class App {
 
   //Run configuration methods on the Express instance.
   constructor() {
+    winston.info('Auth Starting');
     this.express = express();
 
     // Set oauth to be Our Implemenation
@@ -35,7 +37,7 @@ class App {
 
   // Configure Express middleware.
   private middleware(): void {
-    this.express.use(logger('dev'));
+    this.express.use(morgan('combined', { stream: winston.stream }));
     this.express.use(bodyParser.json());
     this.express.use(cors())
     this.express.use(bodyParser.urlencoded({ extended: false }));

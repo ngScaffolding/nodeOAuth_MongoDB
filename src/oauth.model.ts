@@ -6,6 +6,7 @@ var JWT = require('jsonwebtoken');
 var DataSourceSwitch = require('./dataSourceSwitch');
 
 require('dotenv').config();
+var winston = require('./config/winston');
 
 export class OAuthModel { //implements PasswordModel {
 
@@ -29,7 +30,7 @@ export class OAuthModel { //implements PasswordModel {
 
     grantTypeAllowed(clientID, grantType, callback) {
 
-        console.log('grantTypeAllowed called and clientID is: ', clientID, ' and grantType is: ', grantType);
+        winston.info('grantTypeAllowed called and clientID is: ', clientID, ' and grantType is: ', grantType);
       
         callback(false, true);
       }
@@ -37,7 +38,7 @@ export class OAuthModel { //implements PasswordModel {
     // Required for Password Grant
     getUser(username: string, password: string, callback?: Callback<false | "" | 0 | User>): Promise<false | "" | 0 | User> {
         
-        console.log('getUser() called and username is: ', username);
+        winston.info('getUser() called and username is: ', username);
         
         var dataAccess = DataSourceSwitch.default.dataSource as IDataAccessLayer;
         dataAccess.getUserFromID(username)
