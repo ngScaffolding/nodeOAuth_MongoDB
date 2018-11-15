@@ -18,6 +18,7 @@ export class OAuthModel { //implements PasswordModel {
             if(client){
                 callback(false, client as Client);
             } else {
+                winston.error('Invalid ClientID ', clientId);
                 callback(true);
             }
         })
