@@ -1,4 +1,6 @@
-export interface IUserModel {
+import { AuthUser } from "@ngscaffolding/models";
+
+export interface IUserModel extends AuthUser {
     id?: any;
     salt: string;
     password: string;

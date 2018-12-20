@@ -5,7 +5,7 @@ export interface IUserDataAccess {
     userLoggedOn(userId: string);
     userLogonFailed(userId: string);
 
-    getUsers(adminRoles: string[]): Promise<IUserModel[]>;
+    getUsers(): Promise<IUserModel[]>;
     addUser(user: IUserModel);
     updateUser(user: IUserModel);
 }
