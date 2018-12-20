@@ -14,6 +14,15 @@ var winston = require('../../config/winston');
 const mongoose = require('mongoose');
 
 export class Database implements IClientDataAccess, IUserDataAccess {
+    getUsers(adminRoles: string[]): Promise<import("c:/Users/dbaines/source/ngscaffolding/nodeOAuth/src/models/IUser.model").IUserModel[]> {
+        throw new Error("Method not implemented.");
+    }
+    addUser(user: import("c:/Users/dbaines/source/ngscaffolding/nodeOAuth/src/models/IUser.model").IUserModel) {
+        throw new Error("Method not implemented.");
+    }
+    updateUser(user: import("c:/Users/dbaines/source/ngscaffolding/nodeOAuth/src/models/IUser.model").IUserModel) {
+        throw new Error("Method not implemented.");
+    }
     private static _database: Database;
 
     private constructor() {

@@ -2,8 +2,12 @@ export interface IUserModel {
     id?: any;
     salt: string;
     password: string;
-    expires: Date;
+    passwordExpires: Date;
     passwordFailures: number;
     passwordLastFailed: Date;
     changeNextLogon: boolean;
+    confirmHash: string;
+    confirmExpires: Date;
+    emailConfirmed: boolean;
+    isLocked: boolean;
 }

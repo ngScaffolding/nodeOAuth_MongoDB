@@ -5,6 +5,15 @@ import { IUserModel } from '../../models/IUser.model';
 
 
 export class MongoDBDataAccess implements IDataAccessLayer {
+  getUsers(adminRoles: string[]): Promise<IUserModel[]> {
+    throw new Error("Method not implemented.");
+  }
+  addUser(user: IUserModel) {
+    throw new Error("Method not implemented.");
+  }
+  updateUser(user: IUserModel) {
+    throw new Error("Method not implemented.");
+  }
   
   getClientFromID(clientId: string, clientSecret?: string): Promise<IClientModel> {
     return DB.getClientFromID(clientId, clientSecret);

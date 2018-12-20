@@ -2,6 +2,7 @@ import * as path from 'path';
 import * as express from 'express';
 import * as morgan from 'morgan';
 import * as bodyParser from 'body-parser';
+import authoriseRequest from './auth/authoriseRequest';
 
 import ExpressOAuthServer = require('node-oauth2-server');
 import { OAuthModel } from './oauth.model';
@@ -40,6 +41,7 @@ class App {
     this.express.use(morgan('combined', { stream: winston.stream }));
     this.express.use(bodyParser.json());
     this.express.use(cors())
+    this.express.use(authoriseRequest);
     this.express.use(bodyParser.urlencoded({ extended: false }));
   }
 }
