@@ -60,22 +60,40 @@ export class UserRouter {
             res.status(401).send({ message: 'Not Authorised for User' });
         }
     }
-
-    public async addMenuItem(req: Request, res: Response, next: NextFunction) {
-        var MenuItem = {};
-
-        for (const key in req.body) {
-            MenuItem[key] = req.body[key];
-        }
-
-        // const newMenuItem = await DB.addMenuItem(MenuItem as IMenuItem);
-        // res.json(newMenuItem);
+    public async addUser(req: Request, res: Response, next: NextFunction) {
+    }
+    public async registerUser(req: Request, res: Response, next: NextFunction) {
+    }
+    
+    public async confirmUser(req: Request, res: Response, next: NextFunction) {
+    }
+    public async changePassword(req: Request, res: Response, next: NextFunction) {
+    }
+    public async setPassword(req: Request, res: Response, next: NextFunction) {
     }
 
     init() {
+        // Get Users
         this.router.get('/', this.getAll);
+
+        // Get User
         this.router.get('/:id', this.getUserFromId);
-        this.router.post('/', this.addMenuItem);
+        
+        // Create User
+        this.router.post('/', this.addUser);
+
+        // register User
+        this.router.post('/register', this.registerUser);
+
+        // Confirm Registration
+        this.router.get('/confirm/:id', this.confirmUser);
+
+        // Set Password (For Admin)
+        this.router.post('/setPassword', this.setPassword);
+
+        // Change Password (For the User)
+        this.router.post('/changePassword', this.changePassword);
+
     }
 }
 
