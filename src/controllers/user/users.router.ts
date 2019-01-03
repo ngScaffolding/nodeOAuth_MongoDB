@@ -61,8 +61,40 @@ export class UserRouter {
         }
     }
     public async addUser(req: Request, res: Response, next: NextFunction) {
+        var userDetails = req['userDetails'] as BasicUser;
+        var dataAccess = DataSourceSwitch.default.dataSource;
+
+        var newUser = req.body as IUserModel;
+
+        const roles = await this.dataAccess.getAllRoles();
+
+        const adminRoles = getAdminRolesForUser(newUser, roles);
+
+        if (canIAdminister(userDetails.roles, adminRoles, true)) {
+            dataAccess.addUser(newUser)
+        } else {
+            res.status(401).send({ message: 'Not Authorised to create for User' });
+        }
+
+    }
+    public async updateUser(req: Request, res: Response, next: NextFunction) {
+        var userDetails = req['userDetails'] as BasicUser;
+        var dataAccess = DataSourceSwitch.default.dataSource;
+
+        var newUser = req.body as IUserModel;
+
+        const roles = await this.dataAccess.getAllRoles();
+
+        const adminRoles = getAdminRolesForUser(newUser, roles);
+
+        if (canIAdminister(userDetails.roles, adminRoles, true)) {
+            dataAccess.addUser(newUser)
+        } else {
+            res.status(401).send({ message: 'Not Authorised to create for User' });
+        }
     }
     public async registerUser(req: Request, res: Response, next: NextFunction) {
+        
     }
     
     public async confirmUser(req: Request, res: Response, next: NextFunction) {
@@ -81,6 +113,9 @@ export class UserRouter {
         
         // Create User
         this.router.post('/', this.addUser);
+
+        // Update User
+        this.router.patch('/', this.updateUser);
 
         // register User
         this.router.post('/register', this.registerUser);
