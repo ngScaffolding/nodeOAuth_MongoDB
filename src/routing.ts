@@ -4,7 +4,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { Logger } from './logger';
 import { RequestHandler } from "express-serve-static-core";
 import OpenIDConnectRouter from './controllers/openIDConnect/openIDConnect.routing';
-import { UserRouter } from './controllers/users/users.router';
+import { UserRouter } from './controllers/user/users.router';
 
 export class RouterSetup {
   protected logger = new Logger(__filename);

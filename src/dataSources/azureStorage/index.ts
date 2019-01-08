@@ -77,7 +77,7 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
       });
     });
 
-    return null;
+    // return null;
     // return DB.getClientFromID(clientId, clientSecret);
   }
 

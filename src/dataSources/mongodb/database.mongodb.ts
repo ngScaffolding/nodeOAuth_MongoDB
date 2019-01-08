@@ -7,6 +7,7 @@ import { IOAuthUsersModel, OAuthUserModel } from './models/users.model';
 import { IOAuthClientModel, OAuthClientModel } from './models/clients.model';
 
 import { IClientDataAccess, IUserDataAccess } from '../dataAccessLayer';
+import { IUserModel } from '../../models/IUser.model';
 
 require('dotenv').config();
 var winston = require('../../config/winston');
@@ -14,13 +15,13 @@ var winston = require('../../config/winston');
 const mongoose = require('mongoose');
 
 export class Database implements IClientDataAccess, IUserDataAccess {
-    getUsers(adminRoles: string[]): Promise<import("c:/Users/dbaines/source/ngscaffolding/nodeOAuth/src/models/IUser.model").IUserModel[]> {
+    getUsers(): Promise<IUserModel[]> {
         throw new Error("Method not implemented.");
     }
-    addUser(user: import("c:/Users/dbaines/source/ngscaffolding/nodeOAuth/src/models/IUser.model").IUserModel) {
+    addUser(user: IUserModel) {
         throw new Error("Method not implemented.");
     }
-    updateUser(user: import("c:/Users/dbaines/source/ngscaffolding/nodeOAuth/src/models/IUser.model").IUserModel) {
+    updateUser(user: IUserModel) {
         throw new Error("Method not implemented.");
     }
     private static _database: Database;
