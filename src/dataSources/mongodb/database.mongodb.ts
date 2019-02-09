@@ -30,7 +30,8 @@ export class Database implements IClientDataAccess, IUserDataAccess {
         mongoose.Promise = global.Promise;
 
         let options: ConnectionOptions = <ConnectionOptions>{
-            promiseLibrary: global.Promise
+            promiseLibrary: global.Promise,
+            useNewUrlParser: true
         };
 
         if (process.env.DB_PASS) {
