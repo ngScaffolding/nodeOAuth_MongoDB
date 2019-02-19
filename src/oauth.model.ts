@@ -158,7 +158,7 @@ export class OAuthModel { //implements PasswordModel {
       issuer: process.env.JWT_ISSUER,
       subject: user.userId,
       expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRY,
-      algorithm:  "RS256"
+      algorithm:  "HS256"
     };
 
     let token = null;
