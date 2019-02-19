@@ -2,11 +2,12 @@ import { ExtensionModel, BaseModel, Client, User, Callback, Token, PasswordModel
 import { Request } from 'express';
 import { PasswordHelper } from './password.helper';
 import { IDataAccessLayer } from './dataSources/dataAccessLayer';
-var JWT = require('jsonwebtoken');
-var DataSourceSwitch = require('./dataSourceSwitch');
+import { SignOptions } from 'jsonwebtoken';
+const JWT = require('jsonwebtoken');
+const DataSourceSwitch = require('./dataSourceSwitch');
 
 require('dotenv').config();
-var winston = require('./config/winston');
+const winston = require('./config/winston');
 
 export class OAuthModel { //implements PasswordModel {
 
@@ -144,37 +145,29 @@ export class OAuthModel { //implements PasswordModel {
     // This generateToken implementation generates a token with JWT.
     // the token output is the Base64 encoded string.
     generateToken = function(type: string, req: any, callback: Callback<string>) {
-    var token;
-    var secret;
     var user = req.user;
-    var exp = new Date();
+
     var payload = {
-      // public claims
-      iss:  process.env.JWT_ISSUER,   // issuer
-  
-      // private claims
-      userId: user.userId,
       roles: user.roles,
       firstName: user.firstname,
       lastName: user.lastname,
-      email: user.email,
-      exp: null
+      email: user.email
     };
-    var options = {
-      // algorithms: ['HS256']  // HMAC using SHA-256 hash algorithm
-    };
-  
-    if (type === 'accessToken') {
-      secret = process.env.JWT_SECRET_FOR_ACCESS_TOKEN;
-      exp.setSeconds(exp.getSeconds() + Number(process.env.JWT_ACCESS_TOKEN_EXPIRY_SECONDS));
-    } else {
-      secret = process.env.JWT_SECRET_FOR_REFRESH_TOKEN;
-      exp.setSeconds(exp.getSeconds() + Number(process.env.JWT_REFRESH_TOKEN_EXPIRY_SECONDS));
-    }
-    payload.exp = exp.getTime();
 
-    token = JWT.sign(payload, secret, options);
-  
+    var options: SignOptions = {
+      issuer: process.env.JWT_ISSUER,
+      subject: user.userId,
+      expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRY,
+      algorithm:  "RS256"
+    };
+
+    let token = null;
+    try{
+      token = JWT.sign(payload, process.env.JWT_PRIVATE_KEY, options);
+    }
+    catch(err){
+      winston.error(err);
+    }
     callback(false, token);
   };
 }
