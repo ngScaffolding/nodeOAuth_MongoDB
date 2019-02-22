@@ -1,11 +1,10 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { CoreMenuItem, BasicUser, DashboardModel } from '@ngscaffolding/models';
+import { BasicUser } from '@ngscaffolding/models';
 import { IDataAccessLayer } from '../../dataSources/dataAccessLayer';
-import { checkUser } from '../../auth/checkUser';
-import { forkJoin } from 'rxjs';
-import canIAdminister from '../../auth/canIAdmninster';
 import { IUserModel } from '../../models/IUser.model';
 import getAdminRolesForUser from '../../auth/getAdminRolesForUser';
+import canIAdminister from '../../auth/canIAdmninster';
+
 
 const winston = require('../../config/winston');
 
@@ -29,7 +28,7 @@ export class UserRouter {
       res.sendStatus(401);
       return;
     }
-    
+
     var dataAccess = DataSourceSwitch.default.dataSource;
 
     const roles = await dataAccess.getAllRoles();

@@ -5,6 +5,7 @@ import { Logger } from './logger';
 import { RequestHandler } from 'express-serve-static-core';
 import OpenIDConnectRouter from './controllers/openIDConnect/openIDConnect.routing';
 import UserRouter from './controllers/user/users.router';
+import RolesRouter from './controllers/role/roles.router';
 
 export class RouterSetup {
   protected logger = new Logger(__filename);
@@ -18,7 +19,8 @@ export class RouterSetup {
     this.express.use('/', router);
     
     // User Endpoints
-    this.express.use('/api/v1/user', UserRouter);
+    this.express.use('/api/v1/users', UserRouter);
+    this.express.use('/api/v1/roles', RolesRouter);
 
     router.post('/auth/token', this.express.oauth.grant(), (req: Request, res: Response, next: NextFunction) => this.getToken(req, res, next));
 
