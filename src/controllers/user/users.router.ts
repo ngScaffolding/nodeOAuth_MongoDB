@@ -26,9 +26,9 @@ export class UserRouter {
             var userDetails = req['userDetails'] as BasicUser;
             var dataAccess = DataSourceSwitch.default.dataSource;
 
-            const roles = await this.dataAccess.getAllRoles();
+            const roles = await dataAccess.getAllRoles();
 
-            const users = await this.dataAccess.getUsers();
+            const users = await dataAccess.getUsers();
 
             var returnedUsers: IUserModel[] = [];
 
@@ -132,6 +132,6 @@ export class UserRouter {
     }
 }
 
-const userReouter = new UserRouter().router;
+const userRouter = new UserRouter().router;
 
-export default userReouter;
+export default userRouter;

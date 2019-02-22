@@ -28,10 +28,19 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
     return new Promise((resolve, reject) => {
       var query = new azure.TableQuery();
 
-      tableService.queryEntities('oauthroles', query, null, (error, result, response) => {
+      tableService.queryEntities('oauthroles', query, null, (error, results, response) => {
         if (!error) {
-          const role = JSON.parse(result.data['_']);
-          resolve(role);
+          let returnValues: Role[] = [];
+          try {
+            results.entries.forEach(result => {
+              const entity = JSON.parse(result.data['_']);
+              returnValues.push(entity);
+            });
+            resolve(returnValues);
+          } catch (error) {
+            reject(error);
+          }
+          resolve(returnValues);
         } else {
           reject();
         }
@@ -44,10 +53,18 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
     return new Promise((resolve, reject) => {
       var query = new azure.TableQuery();
 
-      tableService.queryEntities('oauthusers', query, null, (error, result, response) => {
+      tableService.queryEntities('oauthusers', query, null, (error, results, response) => {
         if (!error) {
-          const users = JSON.parse(result.data['_']);
-          resolve(users);
+          let returnValues: IUserModel[] = [];
+          try {
+            results.entries.forEach(result => {
+              const entity = JSON.parse(result.data['_']);
+              returnValues.push(entity);
+            });
+            resolve(returnValues);
+          } catch (error) {
+            reject(error);
+          }
         } else {
           reject();
         }
