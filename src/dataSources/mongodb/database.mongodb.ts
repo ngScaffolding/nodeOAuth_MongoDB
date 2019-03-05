@@ -7,7 +7,7 @@ import { IOAuthUsersModel, OAuthUserModel } from './models/users.model';
 import { IOAuthClientModel, OAuthClientModel } from './models/clients.model';
 
 import { IClientDataAccess, IUserDataAccess } from '../dataAccessLayer';
-import { IUserModel } from '../../models/IUser.model';
+import { IUserModel } from '@ngscaffolding/models';
 
 require('dotenv').config();
 var winston = require('../../config/winston');

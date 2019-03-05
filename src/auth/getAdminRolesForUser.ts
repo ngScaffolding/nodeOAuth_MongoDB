@@ -1,7 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { RequestHandlerParams } from 'express-serve-static-core';
-import { IUserModel } from '../models/IUser.model';
-import { Role } from '@ngscaffolding/models';
+import { Role, IUserModel } from '@ngscaffolding/models';
 
 export default function getAdminRolesForUser(user: IUserModel, allRoles: Role[]): string[] {
   let adminRoles = ['useradmin', 'superadmin'];

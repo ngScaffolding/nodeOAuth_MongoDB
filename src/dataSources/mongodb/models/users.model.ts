@@ -1,6 +1,6 @@
 import { Document, Schema } from 'mongoose';
 import { BasicUser } from '@ngscaffolding/models';
-import { IUserModel } from '../../../models/IUser.model';
+import { IUserModel } from '@ngscaffolding/models';
 
 const mongoose = require('mongoose');
 
