@@ -7,6 +7,8 @@ import OpenIDConnectRouter from './controllers/openIDConnect/openIDConnect.routi
 import UserRouter from './controllers/user/users.router';
 import RolesRouter from './controllers/role/roles.router';
 
+import isUserInRole from './auth/authoriseRoles';
+
 export class RouterSetup {
   protected logger = new Logger(__filename);
 
@@ -19,8 +21,8 @@ export class RouterSetup {
     this.express.use('/', router);
     
     // User Endpoints
-    this.express.use('/api/v1/users', UserRouter);
-    this.express.use('/api/v1/roles', RolesRouter);
+    this.express.use('/api/v1/users', isUserInRole('user'), UserRouter);
+    this.express.use('/api/v1/roles', isUserInRole('user'), RolesRouter);
 
     router.post('/auth/token', this.express.oauth.grant(), (req: Request, res: Response, next: NextFunction) => this.getToken(req, res, next));
 

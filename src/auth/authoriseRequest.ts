@@ -8,29 +8,27 @@ export default async function authoriseRequest(req: Request, res: Response, next
   // Get token from request
   let apiToken = req.headers['authorization'];
 
-  if (!apiToken) {
+  if (apiToken) {
+    // Remove Bearer bit
+    apiToken = apiToken.replace('Bearer ', '');
+
+    // Validate & Decode Token
+    try {
+      let jwtDetails = jwt.verify(apiToken, process.env.JWT_PUBLIC_KEY);
+
+      // Setup UserDetailsModel from Token Details
+      let userDetails: BasicUser = { ...jwtDetails };
+      userDetails.userId = jwtDetails['sub'];
+
+      // Add UserDetailsModel to the Request Object
+      req['userDetails'] = userDetails;
+    } catch (err) {
+      req['userDetails'] = null;
+      // res.sendStatus(401);
+      // return;
+    }
+  } else {
     req['userDetails'] = null;
-    next();
-    return;
-  }
-
-  // Remove Bearer bit
-  apiToken = apiToken.replace('Bearer ', '');
-
-  // Validate & Decode Token
-  try {
-    let jwtDetails = jwt.verify(apiToken, process.env.JWT_PUBLIC_KEY);
-
-    // Setup UserDetailsModel from Token Details
-    let userDetails: BasicUser = { ...jwtDetails };
-    userDetails.userId = jwtDetails['sub'];
-
-    // Add UserDetailsModel to the Request Object
-    req['userDetails'] = userDetails;
-  } catch (err) {
-    req['userDetails'] = null;
-    next();
-    return;
   }
 
   next();
