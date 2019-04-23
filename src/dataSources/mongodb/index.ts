@@ -1,7 +1,6 @@
 import { IDataAccessLayer } from '../dataAccessLayer';
 import { DB } from './database.mongodb';
-import { IClientModel } from '../../../../models/src/authModels/IClient.model';
-import { IUserModel } from '@ngscaffolding/models';
+import { IClientModel, IUserModel } from '@ngscaffolding/models';
 import { Role } from '@ngscaffolding/models';
 
 
