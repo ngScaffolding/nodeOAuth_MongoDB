@@ -6,7 +6,7 @@
       "sourceMap": true
     },
     "include": [
-      "src/**/*.ts", "../models/src/authModels/IUser.model.ts", "../models/src/authModels/IClient.model.ts"
+      "src/**/*.ts"
     ],
     "exclude": [
       "node_modules"
