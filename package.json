@@ -5,10 +5,10 @@
   "license": "MIT",
   "scripts": {
     "start": "node dist/index.js",
-    "dev": "tsc-watch --onSuccess \"node dist/index.js\"",
+    "dev": "copy .env dist & tsc-watch --onSuccess \"node dist/index.js\"",
     "debug": "nodemon --inspect dist/index.js",
     "test": "mocha --reporter spec --compilers ts:ts-node/register",
-    "build": "tsc -p . & copy .env dist",
+    "build": "tsc -p .",
     "postinstall": "node_modules\\.bin\\tsc -p ."
   },
   "devDependencies": {
