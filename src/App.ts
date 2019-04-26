@@ -38,11 +38,21 @@ class App {
 
   // Configure Express middleware.
   private middleware(): void {
+    this.express.set('views', path.join(__dirname, 'views'));
+    this.express.set('view engine', 'pug');
+
     this.express.use(morgan('combined', { stream: winston.stream }));
     this.express.use(bodyParser.json());
     this.express.use(cors())
     this.express.use(authoriseRequest);
     this.express.use(bodyParser.urlencoded({ extended: false }));
+    
+    this.express.use(function(err,req,res,next){
+      if(err) {
+        winston.error(err);
+        console.error(err);
+      }
+    });
   }
 }
 
