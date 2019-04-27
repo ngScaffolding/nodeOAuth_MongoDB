@@ -19,7 +19,9 @@ export class RouterSetup {
     let router = express.Router();
 
     // this.express.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+    this.express.use('/', router);
     this.express.use('/', DefaultRouter);
+
     
     // User Endpoints
     this.express.use('/api/v1/users', isUserInRole('user'), UserRouter);
