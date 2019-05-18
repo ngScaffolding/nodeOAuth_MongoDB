@@ -65,6 +65,8 @@ export class UserRouter {
       res.status(401).send({ message: 'Not Authorised for User' });
     }
   }
+  public async deleteUser(req: Request, res: Response, next: NextFunction) {
+  }
   public async addUser(req: Request, res: Response, next: NextFunction) {
     var userDetails = req['userDetails'] as BasicUser;
     var dataAccess = DataSourceSwitch.default.dataSource;
@@ -112,6 +114,9 @@ export class UserRouter {
 
     // Create User
     this.router.post('/', this.addUser);
+
+    // Delete User
+    this.router.delete('/:id', this.deleteUser);
 
     // Update User
     this.router.patch('/', this.updateUser);
