@@ -1,9 +1,7 @@
 import * as SendGrid from '@sendgrid/mail';
 
-export function send(){
+export function send(to: string, from: string, subject: string, html: string){
     SendGrid.setApiKey(process.env.SENDGRID_API_KEY);
 
-    SendGrid.send({
-        
-    },false).then().catch();
+    // SendGrid.send({length: 0}).then().catch();
 }
