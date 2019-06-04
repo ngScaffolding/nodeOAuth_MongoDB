@@ -50,6 +50,12 @@ export class OAuthModel {
           callback(true);
         }
 
+        // Check for Locked users
+        if(user.isLocked) {
+          dataAccess.userLogonFailed(username);
+          callback('User Locked');
+        }
+
         // Compare entered password to salted saved
         let encPassword = PasswordHelper.encodePassword(password, user.salt);
 
