@@ -6,13 +6,13 @@ import { Role } from '@ngscaffolding/models';
 
 export class MongoDBDataAccess implements IDataAccessLayer {
   getRole(name: string): Promise<Role> {
-    throw new Error("Method not implemented.");
+    return DB.getRole(name);
   }
   getAllRoles(): Promise<Role[]> {
-    throw new Error("Method not implemented.");
+    return DB.getAllRoles();
   }
   getUsers(): Promise<IUserModel[]> {
-    throw new Error("Method not implemented.");
+    return DB.getUsers();
   }
   addUser(user: IUserModel) {
     throw new Error("Method not implemented.");

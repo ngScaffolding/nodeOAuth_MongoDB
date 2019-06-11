@@ -6,18 +6,18 @@ import { IOAuthTokensModel, OAuthTokensModel } from './models/tokens.model';
 import { IOAuthUsersModel, OAuthUserModel } from './models/users.model';
 import { IOAuthClientModel, OAuthClientModel } from './models/clients.model';
 
-import { IClientDataAccess, IUserDataAccess } from '../dataAccessLayer';
-import { IUserModel } from '@ngscaffolding/models';
+import { IClientDataAccess, IUserDataAccess, IRoleDataAccess } from '../dataAccessLayer';
+import { IUserModel, Role } from '@ngscaffolding/models';
+import { OAuthRoleModel } from './models/roles.model';
 
 require('dotenv').config();
 var winston = require('../../config/winston');
 
 const mongoose = require('mongoose');
 
-export class Database implements IClientDataAccess, IUserDataAccess {
-    getUsers(): Promise<IUserModel[]> {
-        throw new Error("Method not implemented.");
-    }
+export class Database implements IClientDataAccess, IUserDataAccess, IRoleDataAccess {
+    
+    
     addUser(user: IUserModel) {
         throw new Error("Method not implemented.");
     }
@@ -103,10 +103,25 @@ export class Database implements IClientDataAccess, IUserDataAccess {
 
     // //////////////////////////////////////////////////////////////////
     //
+    // Role Section
+    // 
+    // //////////////////////////////////////////////////////////////////
+    public async getRole(name: string): Promise<Role> {
+        return await OAuthRoleModel.findOne({name: name});
+    }
+    public async getAllRoles(): Promise<Role[]> {
+        return await OAuthRoleModel.find({});
+    }
+
+    // //////////////////////////////////////////////////////////////////
+    //
     // User Section
     // 
     // //////////////////////////////////////////////////////////////////
-   
+    public async getUsers(): Promise<IUserModel[]> {
+        return await OAuthUserModel.find({});
+    }
+
     public async getUserFromID(userId: string, password: string = null): Promise<IOAuthUsersModel> {
         
         return await OAuthUserModel.findOne({userId: userId});
