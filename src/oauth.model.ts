@@ -48,12 +48,14 @@ export class OAuthModel {
       .then(user => {
         if (!user) {
           callback(true);
+          return null;
         }
 
         // Check for Locked users
         if(user.isLocked) {
           dataAccess.userLogonFailed(username);
           callback('User Locked');
+          return null;
         }
 
         // Compare entered password to salted saved
@@ -62,6 +64,7 @@ export class OAuthModel {
         if (encPassword !== user.password) {
           dataAccess.userLogonFailed(username);
           callback('User name and Password not recognised');
+          return null;
         } else {
           dataAccess.userLoggedOn(username);
           callback(false, user as User);
