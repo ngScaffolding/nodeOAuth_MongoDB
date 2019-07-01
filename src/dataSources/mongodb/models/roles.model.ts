@@ -1,5 +1,5 @@
 import { Document, Schema } from 'mongoose';
-import { Role } from '@ngscaffolding/models';
+import { Role } from 'ngscaffolding-models';
 
 const mongoose = require('mongoose');
 

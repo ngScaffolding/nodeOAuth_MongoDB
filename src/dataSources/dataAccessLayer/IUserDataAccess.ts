@@ -1,4 +1,4 @@
-import { IUserModel } from "@ngscaffolding/models";
+import { IUserModel } from "ngscaffolding-models";
 
 export interface IUserDataAccess {
     getUserFromID(userId: string, password?: string): Promise<IUserModel>;

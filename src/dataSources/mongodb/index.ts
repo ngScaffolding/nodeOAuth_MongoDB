@@ -1,7 +1,7 @@
 import { IDataAccessLayer } from '../dataAccessLayer';
 import { DB } from './database.mongodb';
-import { IClientModel, IUserModel } from '@ngscaffolding/models';
-import { Role } from '@ngscaffolding/models';
+import { IClientModel, IUserModel } from 'ngscaffolding-models';
+import { Role } from 'ngscaffolding-models';
 
 
 export class MongoDBDataAccess implements IDataAccessLayer {

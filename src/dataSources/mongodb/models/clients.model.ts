@@ -1,5 +1,5 @@
 import { Document, Schema } from 'mongoose';
-import { IClientModel } from '@ngscaffolding/models';
+import { IClientModel } from 'ngscaffolding-models';
 
 const mongoose = require('mongoose');
 
