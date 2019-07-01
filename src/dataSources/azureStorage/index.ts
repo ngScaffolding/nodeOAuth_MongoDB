@@ -1,5 +1,5 @@
 import { IDataAccessLayer } from '../dataAccessLayer';
-import { Role, IUserModel, IClientModel } from 'ngscaffolding-models';
+import { Role, IUserModel, IClientModel } from '../../models/src/index';
 
 var azure = require('azure-storage');
 

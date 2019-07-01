@@ -1,8 +1,6 @@
 import { IDataAccessLayer } from '../dataAccessLayer';
 import { DB } from './database.mongodb';
-import { IClientModel, IUserModel } from 'ngscaffolding-models';
-import { Role } from 'ngscaffolding-models';
-
+import { IClientModel, IUserModel, Role } from '../../models/src/index';
 
 export class MongoDBDataAccess implements IDataAccessLayer {
   getRole(name: string): Promise<Role> {

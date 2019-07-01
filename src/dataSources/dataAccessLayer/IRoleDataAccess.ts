@@ -1,4 +1,4 @@
-import { Role } from 'ngscaffolding-models';
+import { Role } from '../../models/src/index';
 
 
 export interface IRoleDataAccess {
