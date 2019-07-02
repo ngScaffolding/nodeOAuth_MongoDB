@@ -1,5 +1,5 @@
 import { Document, Schema } from 'mongoose';
-import { ITokenModel } from '../../../models/IToken.model';
+import { ITokenModel } from '../../../IToken.model';
 
 const mongoose = require('mongoose');
 

@@ -1,7 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { BasicUser } from '@ngscaffolding/models';
+import { BasicUser, IUserModel } from '../../models/src/index';
 import { IDataAccessLayer } from '../../dataSources/dataAccessLayer';
-import { IUserModel } from '@ngscaffolding/models';
 import getAdminRolesForUser from '../../auth/getAdminRolesForUser';
 import canIAdminister from '../../auth/canIAdmninster';
 
