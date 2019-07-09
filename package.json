@@ -53,6 +53,7 @@
     "node-oauth2-server": "^2.4.0",
     "node-pre-gyp": "^0.11.0",
     "npm-run-all": "^4.1.5",
+    "prompt": "^1.0.0",
     "pug": "^2.0.3",
     "request": "^2.88.0",
     "request-to-curl": "^0.1.1",
@@ -60,8 +61,8 @@
     "rxjs": "6.2.2",
     "shelljs": "^0.8.3",
     "swagger-ui-express": "^3.0.10",
-    "tsc-watch": "^1.0.21",
     "ts-node": "^6.2.0",
+    "tsc-watch": "^1.0.21",
     "typescript": "^2.8.3",
     "uuid": "^3.3.2",
     "winston": "^2.4.4"
