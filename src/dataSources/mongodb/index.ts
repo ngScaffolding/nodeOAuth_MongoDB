@@ -13,10 +13,10 @@ export class MongoDBDataAccess implements IDataAccessLayer {
     return DB.getUsers();
   }
   addUser(user: IUserModel) {
-    throw new Error("Method not implemented.");
+    return DB.updateUser(user);
   }
   updateUser(user: IUserModel) {
-    throw new Error("Method not implemented.");
+    return DB.updateUser(user);
   }
   
   getClientFromID(clientId: string, clientSecret?: string): Promise<IClientModel> {

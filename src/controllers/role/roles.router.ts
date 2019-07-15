@@ -34,49 +34,37 @@ export class RolesRouter {
   }
 
   public async getUserFromId(req: Request, res: Response, next: NextFunction) {
-    var userDetails = req['userDetails'] as BasicUser;
+    var userDetails = req['userDetails'] as IUserModel;
     const id = req.query.id;
 
     const loadedUser = await this.dataAccess.getUserFromID(id);
 
-    const roles = await this.dataAccess.getAllRoles();
-
-    const adminRoles = getAdminRolesForUser(loadedUser, roles);
-
     // Check if I can Administer this user or Is it me?
-    if (userDetails.userId === id || canIAdminister(userDetails.roles, adminRoles)) {
+    if (canIAdminister(userDetails, loadedUser)) {
       res.json(loadedUser);
     } else {
       res.status(401).send({ message: 'Not Authorised for User' });
     }
   }
   public async addUser(req: Request, res: Response, next: NextFunction) {
-    var userDetails = req['userDetails'] as BasicUser;
+    var userDetails = req['userDetails'] as IUserModel;
     var dataAccess = DataSourceSwitch.default.dataSource;
 
     var newUser = req.body as IUserModel;
 
-    const roles = await this.dataAccess.getAllRoles();
-
-    const adminRoles = getAdminRolesForUser(newUser, roles);
-
-    if (canIAdminister(userDetails.roles, adminRoles, true)) {
+    if (canIAdminister(userDetails, newUser, true)) {
       dataAccess.addUser(newUser);
     } else {
       res.status(401).send({ message: 'Not Authorised to create for User' });
     }
   }
   public async updateUser(req: Request, res: Response, next: NextFunction) {
-    var userDetails = req['userDetails'] as BasicUser;
+    var userDetails = req['userDetails'] as IUserModel;
     var dataAccess = DataSourceSwitch.default.dataSource;
 
     var newUser = req.body as IUserModel;
 
-    const roles = await this.dataAccess.getAllRoles();
-
-    const adminRoles = getAdminRolesForUser(newUser, roles);
-
-    if (canIAdminister(userDetails.roles, adminRoles, true)) {
+    if (canIAdminister(userDetails, newUser, true)) {
       dataAccess.addUser(newUser);
     } else {
       res.status(401).send({ message: 'Not Authorised to create for User' });
