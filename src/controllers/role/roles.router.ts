@@ -40,7 +40,7 @@ export class RolesRouter {
     const loadedUser = await this.dataAccess.getUserFromID(id);
 
     // Check if I can Administer this user or Is it me?
-    if (canIAdminister(userDetails, loadedUser)) {
+    if (await canIAdminister(userDetails, loadedUser)) {
       res.json(loadedUser);
     } else {
       res.status(401).send({ message: 'Not Authorised for User' });
@@ -52,7 +52,7 @@ export class RolesRouter {
 
     var newUser = req.body as IUserModel;
 
-    if (canIAdminister(userDetails, newUser, true)) {
+    if (await canIAdminister(userDetails, newUser, true)) {
       dataAccess.addUser(newUser);
     } else {
       res.status(401).send({ message: 'Not Authorised to create for User' });
@@ -64,7 +64,7 @@ export class RolesRouter {
 
     var newUser = req.body as IUserModel;
 
-    if (canIAdminister(userDetails, newUser, true)) {
+    if (await canIAdminister(userDetails, newUser, true)) {
       dataAccess.addUser(newUser);
     } else {
       res.status(401).send({ message: 'Not Authorised to create for User' });

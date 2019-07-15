@@ -14,7 +14,7 @@ var prompt_attributes = [
     { name: 'lastName' },
 
     { name: 'issuer', message: 'JWT Issuer', initial: process.env.JWT_ISSUER },
-    { name: 'expires (10y)', message: 'JWT Expires', initial: '10y' }
+    { name: 'expires', message: 'JWT Expires (10y)', initial: '10y' }
     
 ];
 
@@ -25,7 +25,7 @@ prompt.get(prompt_attributes, function (err, result) {
     console.log(`Command-line input received: ${process.env.JWT_ISSUER}`);
 
     var payload = {
-        roles: 'admin',
+        roles: ['user', 'admin'],
         firstName: result.firstname,
         lastName: result.lastname,
         email: result.username

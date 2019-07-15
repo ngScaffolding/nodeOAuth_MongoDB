@@ -4,37 +4,37 @@ import { IUserModel } from '../models/src';
 import getAdminRolesForUser from './getAdminRolesForUser';
 var DataSourceSwitch = require('../dataSourceSwitch');
 
-export default function canIAdminister(me: IUserModel, userToAdminister: IUserModel, checkAll = false): boolean {
-  var dataAccess = DataSourceSwitch.default.dataSource;
+export default function canIAdminister(me: IUserModel, userToAdminister: IUserModel, checkAll = false): Promise<boolean> {
+  return new Promise<boolean>((resolve, reject) => {
+    var dataAccess = DataSourceSwitch.default.dataSource;
 
-  if (me.userId === userToAdminister.userId) {
-    // It's me!
-    return true;
-  }
+    if (me.userId === userToAdminister.userId) {
+      // It's me!
+      resolve(true);
+    }
 
-  dataAccess.getAllRoles().then(roles => {
-    const authorisedRoles = getAdminRolesForUser(userToAdminister, roles);
+    dataAccess.getAllRoles().then(roles => {
+      const authorisedRoles = getAdminRolesForUser(userToAdminister, roles);
 
-    var authorisedMatches = 0;
+      var authorisedMatches = 0;
 
-    me.roles.forEach(myRole => {
-      if (myRole === 'admin' || myRole === 'user_admin') {
-        authorisedMatches++;
-      }
-
-      authorisedRoles.forEach(authorisedRole => {
-        if (myRole === authorisedRole) {
+      for(const myRole of me.roles){
+        if (myRole === 'admin' || myRole === 'user_admin') {
           authorisedMatches++;
         }
-      });
+
+        authorisedRoles.forEach(authorisedRole => {
+          if (myRole === authorisedRole) {
+            authorisedMatches++;
+          }
+        });
+      }
+
+      if (checkAll) {
+        resolve(authorisedMatches === authorisedRoles.length);
+      } else {
+        resolve(authorisedMatches > 0);
+      }
     });
-
-    if (checkAll) {
-      return authorisedMatches === authorisedRoles.length;
-    } else {
-      return authorisedMatches > 0;
-    }
   });
-
-  return false;
 }

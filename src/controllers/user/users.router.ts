@@ -31,18 +31,17 @@ export class UserRouter {
 
     var dataAccess = DataSourceSwitch.default.dataSource;
 
-    const roles = await dataAccess.getAllRoles();
-
     const users = await dataAccess.getUsers();
 
     var returnedUsers: IUserModel[] = [];
 
-    users.forEach(user => {
+    for(const user of users) {
+    var canAdminister = await canIAdminister(userDetails, user);
 
-      if (canIAdminister(userDetails, user)) {
+    if (canAdminister) {
         returnedUsers.push(user);
       }
-    });
+    };
 
     res.json(returnedUsers);
   }
@@ -56,7 +55,7 @@ export class UserRouter {
     const loadedUser = await dataAccess.getUserFromID(id);
 
     // Check if I can Administer this user or Is it me?
-    if (canIAdminister(userDetails, loadedUser)) {
+    if (await canIAdminister(userDetails, loadedUser)) {
       res.json(loadedUser);
     } else {
       res.status(401).send({ message: 'Not Authorised for User' });
@@ -70,7 +69,7 @@ export class UserRouter {
 
     var newUser = req.body as IUserModel;
 
-    if (canIAdminister(userDetails, newUser, true)) {
+    if (await canIAdminister(userDetails, newUser, true)) {
       dataAccess.addUser(newUser);
     } else {
       res.status(401).send({ message: 'Not Authorised to create for User' });
@@ -82,7 +81,7 @@ export class UserRouter {
 
     var newUser = req.body as IUserModel;
 
-    if (canIAdminister(userDetails, newUser, true)) {
+    if (await canIAdminister(userDetails, newUser, true)) {
       dataAccess.addUser(newUser);
     } else {
       res.status(401).send({ message: 'Not Authorised to create for User' });
@@ -102,7 +101,7 @@ export class UserRouter {
     const loadedUser: IUserModel = await dataAccess.getUserFromID(changeRequest.userId);
 
     // Can I administer or is it me?
-    if(!canIAdminister(userDetails, loadedUser)){
+    if(! await canIAdminister(userDetails, loadedUser)){
       res.status(400).send({ message: 'Not Authorised to Change Password' });
       next({ message: 'Not Authorised to Change Password' });
       return;

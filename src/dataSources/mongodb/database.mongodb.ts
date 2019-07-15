@@ -109,7 +109,15 @@ export class Database implements IClientDataAccess, IUserDataAccess, IRoleDataAc
   //
   // //////////////////////////////////////////////////////////////////
   public async getUsers(): Promise<IUserModel[]> {
-    return await OAuthUserModel.find({});
+    return new Promise<IUserModel[]>((resolve, reject) => {
+      var returnVal = [];
+      OAuthUserModel.find({}, (err, docs) => {
+        docs.forEach(doc => {
+          returnVal.push(doc);
+        });
+        resolve(returnVal);
+      });
+    });
   }
 
   public async getUserFromID(userId: string, password: string = null): Promise<IOAuthUsersModel> {
