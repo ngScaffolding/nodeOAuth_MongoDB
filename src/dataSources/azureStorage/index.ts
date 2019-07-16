@@ -71,9 +71,32 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
   }
   addUser(user: IUserModel) {
     var tableService = azure.createTableService();
+      var entity = {
+        PartitionKey: '',
+        RowKey: user.userId,
+        data: JSON.stringify(user)
+      };
+      tableService.insertEntity('oauthusers', entity, function(error, result, response) {
+        if (!error) {
+          // result contains the entity with field 'taskDone' set to `true`
+        }
+      });
   }
   updateUser(user: IUserModel) {
-    throw new Error('Method not implemented.');
+    this.getUserFromID(user.userId).then(loadedUser => {
+
+      var tableService = azure.createTableService();
+      var entity = {
+        PartitionKey: '',
+        RowKey: user.userId,
+        data: JSON.stringify(user)
+      };
+      tableService.replaceEntity('oauthusers', entity, function(error, result, response) {
+        if (!error) {
+          // result contains the entity with field 'taskDone' set to `true`
+        }
+      });
+    });
   }
 
   getClientFromID(clientId: string, clientSecret?: string): Promise<IClientModel> {
