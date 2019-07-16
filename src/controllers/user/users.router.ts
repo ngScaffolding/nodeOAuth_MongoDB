@@ -39,6 +39,8 @@ export class UserRouter {
     var canAdminister = await canIAdminister(userDetails, user);
 
     if (canAdminister) {
+        user.password = null;
+        user.salt = null;
         returnedUsers.push(user);
       }
     };
