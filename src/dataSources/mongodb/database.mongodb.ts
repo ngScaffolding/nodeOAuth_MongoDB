@@ -19,50 +19,53 @@ export class Database implements IClientDataAccess, IUserDataAccess, IRoleDataAc
   private static _database: Database;
 
   private constructor() {
-    mongoose.Promise = global.Promise;
+    // Only run on mongodb Data Source
+    if (process.env.DATA_SOURCE === 'mongodb') {
+      mongoose.Promise = global.Promise;
 
-    let options: ConnectionOptions = <ConnectionOptions>{
-      promiseLibrary: global.Promise,
-      useNewUrlParser: true
-    };
+      let options: ConnectionOptions = <ConnectionOptions>{
+        promiseLibrary: global.Promise,
+        useNewUrlParser: true
+      };
 
-    if (process.env.DB_PASS) {
-      winston.info(`Setting process.env.DB_USER: ${process.env.DB_USER}`);
-      options.user = process.env.DB_USER;
-    }
-    if (process.env.DB_PASS) {
-      winston.info(`Setting process.env.DB_PASS`);
-      options.pass = process.env.DB_PASS;
-    }
+      if (process.env.DB_PASS) {
+        winston.info(`Setting process.env.DB_USER: ${process.env.DB_USER}`);
+        options.user = process.env.DB_USER;
+      }
+      if (process.env.DB_PASS) {
+        winston.info(`Setting process.env.DB_PASS`);
+        options.pass = process.env.DB_PASS;
+      }
 
-    if (process.env.DB_HOST) {
-      mongoose.connect(process.env.DB_HOST, options).catch((err: Error) => {
-        winston.error(err, `Error connecting to Mongodb`);
+      if (process.env.DB_HOST) {
+        mongoose.connect(process.env.DB_HOST, options).catch((err: Error) => {
+          winston.error(err, `Error connecting to Mongodb`);
+        });
+      }
+
+      // When successfully connected
+      mongoose.connection.on('connected', () => {
+        winston.info('Mongoose default connection open to ', process.env.DB_HOST);
+      });
+
+      // If the connection throws an error
+      mongoose.connection.on('error', err => {
+        winston.error(err, 'Mongoose default connection error: ');
+      });
+
+      // When the connection is disconnected
+      mongoose.connection.on('disconnected', () => {
+        winston.error('Mongoose default connection disconnected');
+      });
+
+      // If the Node process ends, close the Mongoose connection
+      process.on('SIGINT', () => {
+        mongoose.connection.close(() => {
+          winston.info('Mongoose default connection disconnected through app termination');
+          process.exit(0);
+        });
       });
     }
-
-    // When successfully connected
-    mongoose.connection.on('connected', () => {
-      winston.info('Mongoose default connection open to ', process.env.DB_HOST);
-    });
-
-    // If the connection throws an error
-    mongoose.connection.on('error', err => {
-      winston.error(err, 'Mongoose default connection error: ');
-    });
-
-    // When the connection is disconnected
-    mongoose.connection.on('disconnected', () => {
-      winston.error('Mongoose default connection disconnected');
-    });
-
-    // If the Node process ends, close the Mongoose connection
-    process.on('SIGINT', () => {
-      mongoose.connection.close(() => {
-        winston.info('Mongoose default connection disconnected through app termination');
-        process.exit(0);
-      });
-    });
   }
 
   static get instance() {
@@ -130,7 +133,7 @@ export class Database implements IClientDataAccess, IUserDataAccess, IRoleDataAc
 
   updateUser(user: IUserModel) {
     OAuthUserModel.findOneAndUpdate({ userId: user.userId }, user, {}, (error, doc) => {
-        var x = 0;
+      var x = 0;
     });
   }
 

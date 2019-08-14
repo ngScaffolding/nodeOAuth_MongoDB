@@ -1,6 +1,7 @@
 import { IDataAccessLayer  } from './dataSources/dataAccessLayer';
 import { MongoDBDataAccess } from './dataSources/mongodb';
 import { AzureStorageDataAccess } from './dataSources/azureStorage';
+import { MsSQLDataAccess } from './dataSources/mssql/msSQLDataAccess';
 // import { DocumentDBDataAccess } from './dataSources/documentdb';
 
 require('dotenv').config();
@@ -32,8 +33,10 @@ class DataSourceSwitch {
                 // this.dataSource = new DocumentDBDataAccess();
                 break;
             }
-            case 'kumulos':{
-                
+            case 'mssql':{
+                winston.info('Running MS SQL Data Source');
+                this.dataSource = new MsSQLDataAccess();
+                break;
             }
         }
     }
