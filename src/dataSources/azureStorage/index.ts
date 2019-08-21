@@ -1,5 +1,5 @@
 import { IDataAccessLayer } from '../dataAccessLayer';
-import { Role, IUserModel, IClientModel } from '../../models/src/index';
+import { Role, IUserModel, IClientModel } from '../../models/index';
 
 var azure = require('azure-storage');
 

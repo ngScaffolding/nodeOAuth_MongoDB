@@ -1,5 +1,5 @@
 import { IDataAccessLayer } from '../dataAccessLayer';
-import { Role, IUserModel, IClientModel } from '../../models/src/index';
+import { Role, IUserModel, IClientModel } from '../../models/index';
 import { MSSQLHelpers } from './msSQLHelpers';
 
 const sql = require('mssql');
@@ -88,10 +88,28 @@ export class MsSQLDataAccess implements IDataAccessLayer {
             WHERE [UserID] = ${MSSQLHelpers.valueWithQuotesOrNull(user.userId)}`);
   }
   getRole(name: string): Promise<Role> {
-    throw new Error('Method not implemented.');
+    return new Promise((resolve, reject) => {
+      this.runCommand(`SELECT [Value] FROM [dbo].[${this.tablePrefix}OAuthRoles] Where [Name] = '${name}'`).then(results => {
+        let retVal: Role = null;
+        if (results.recordset && results.recordset.length === 1) {
+          retVal = JSON.parse(results.recordset[0]['Value']);
+        }
+        resolve(retVal);
+      });
+    });
   }
   getAllRoles(): Promise<Role[]> {
-    throw new Error('Method not implemented.');
+    return new Promise((resolve, reject) => {
+      this.runCommand(`SELECT [Name] ,[Value] FROM [dbo].[${this.tablePrefix}OAuthRoles]`).then(results => {
+        let retVal: Role[] = [];
+        if (results.recordset) {
+          for (const loopValue of results.recordset) {
+            retVal.push(JSON.parse(loopValue['Value']));
+          }
+        }
+        resolve(retVal);
+      });
+    });
   }
 
   // saveApplicationLog(applicationLog: ApplicationLog): Promise<ApplicationLog> {

@@ -1,4 +1,4 @@
-import { Role } from '../../models/src/index';
+import { Role } from '../../models/index';
 
 
 export interface IRoleDataAccess {

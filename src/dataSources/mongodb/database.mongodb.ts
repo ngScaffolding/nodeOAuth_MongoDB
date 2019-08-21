@@ -7,7 +7,7 @@ import { IOAuthUsersModel, OAuthUserModel } from './models/users.model';
 import { IOAuthClientModel, OAuthClientModel } from './models/clients.model';
 
 import { IClientDataAccess, IUserDataAccess, IRoleDataAccess } from '../dataAccessLayer';
-import { IUserModel, Role } from '../../models/src/index';
+import { IUserModel, Role } from '../../models/index';
 import { OAuthRoleModel } from './models/roles.model';
 
 require('dotenv').config();

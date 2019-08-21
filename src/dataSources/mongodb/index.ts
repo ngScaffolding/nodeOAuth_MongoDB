@@ -1,6 +1,6 @@
 import { IDataAccessLayer } from '../dataAccessLayer';
 import { DB } from './database.mongodb';
-import { IClientModel, IUserModel, Role } from '../../models/src/index';
+import { IClientModel, IUserModel, Role } from '../../models/index';
 
 export class MongoDBDataAccess implements IDataAccessLayer {
   getRole(name: string): Promise<Role> {
