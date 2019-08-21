@@ -1,5 +1,5 @@
 import { Document, Schema } from 'mongoose';
-import { BasicUser, IUserModel } from '../../../models/src/index';
+import { BasicUser, IUserModel } from '../../../models/index';
 
 const mongoose = require('mongoose');
 

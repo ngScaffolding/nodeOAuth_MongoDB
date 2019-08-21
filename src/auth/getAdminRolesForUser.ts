@@ -1,4 +1,4 @@
-import { Role, IUserModel } from '../models/src/index';
+import { Role, IUserModel } from '../models/index';
 
 export default function getAdminRolesForUser(user: IUserModel, allRoles: Role[]): string[] {
   let adminRoles = ['useradmin', 'superadmin'];

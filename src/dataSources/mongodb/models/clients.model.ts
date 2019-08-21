@@ -1,5 +1,5 @@
 import { Document, Schema } from 'mongoose';
-import { IClientModel } from '../../../models/src/index';
+import { IClientModel } from '../../../models/index';
 
 const mongoose = require('mongoose');
 

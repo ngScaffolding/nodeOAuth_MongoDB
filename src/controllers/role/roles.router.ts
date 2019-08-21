@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { BasicUser, IUserModel } from '../../models/src/index';
+import { BasicUser, IUserModel } from '../../models/index';
 import { IDataAccessLayer } from '../../dataSources/dataAccessLayer';
 import getAdminRolesForUser from '../../auth/getAdminRolesForUser';
 import canIAdminister from '../../auth/canIAdmninster';

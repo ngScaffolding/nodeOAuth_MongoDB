@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { RequestHandlerParams } from 'express-serve-static-core';
-import { IUserModel } from '../models/src';
+import { IUserModel } from '../models/index';
 import getAdminRolesForUser from './getAdminRolesForUser';
 var DataSourceSwitch = require('../dataSourceSwitch');
 

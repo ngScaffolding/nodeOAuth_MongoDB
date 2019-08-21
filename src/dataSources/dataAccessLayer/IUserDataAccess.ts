@@ -1,4 +1,4 @@
-import { IUserModel } from "../../models/src/index";
+import { IUserModel } from "../../models/index";
 
 export interface IUserDataAccess {
     getUserFromID(userId: string, password?: string): Promise<IUserModel>;
