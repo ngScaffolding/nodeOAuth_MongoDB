@@ -47,10 +47,11 @@ export enum AppSettings {
   inputShowCalendarIcon = 'inputShowCalendarIcon',
   inputDateTimeFormat = 'inputDateTimeFormat',
   inputDateFormat = 'inputDateFormat',
+  inputDateForceUTC = 'inputDateForceUTC',
 
   // moment Formats for dates
-  momentDateTimeFormat = 'momentDateTimeFormat',
-  momentDateFormat = 'momentDateFormat',
+  dateTimeFormat = 'dateTimeFormat',
+  dateFormat = 'dateFormat',
 
   // DataGrid Options
   dataGridIconToolBar = 'dataGridIconToolBar',
