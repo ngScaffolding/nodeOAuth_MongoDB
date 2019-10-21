@@ -2,14 +2,14 @@ export class ColumnModel {
   field?: string;
 
   cellClass?: string;
-  filter?: string;
   tooltipField?: string;
   headerName?: string;
   headerTooltip?: string;
   pinned?: string; // left or right
   suppressMenu?: boolean;
-  suppressFilter?: boolean;
-  suppressSorting?: boolean;
+  filter?: string;
+
+  sortable?: boolean;
 
   // dateTimeColumn, dateColumn, numericColumn
   type?: string;
