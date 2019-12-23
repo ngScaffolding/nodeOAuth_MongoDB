@@ -37,7 +37,6 @@ export enum InputTypes {
   password = 'password',
   textarea = 'textarea',
   datetime = 'datetime',
-  datetimeUTC = 'datetimeUTC',
   date = 'date',
   time = 'time',
   select = 'select',
