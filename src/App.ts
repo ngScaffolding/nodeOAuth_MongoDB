@@ -50,7 +50,7 @@ class App {
 
     // Configure Express middleware.
     private middleware(): void {
-        this.express.set('views', path.join(__dirname, 'views'));
+        this.express.set('views', 'views');
         this.express.set('view engine', 'pug');
 
         this.express.use(morgan('combined', { stream: winston.stream }));
