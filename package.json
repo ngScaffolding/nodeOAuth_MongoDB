@@ -59,6 +59,7 @@
     "mongoose": "^5.7.5",
     "morgan": "^1.9.0",
     "mssql": "^5.1.0",
+    "node-cache": "^5.1.0",
     "node-oauth2-server": "^2.4.0",
     "node-pre-gyp": "^0.11.0",
     "npm-run-all": "^4.1.5",
