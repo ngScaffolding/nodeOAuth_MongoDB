@@ -10,7 +10,6 @@ require('dotenv').config();
 const winston = require('./config/winston');
 
 export class OAuthModel {
-  //implements PasswordModel {
 
   // Required for Password Grant
   getClient(clientId: string, clientSecret: string, callback?: Callback<false | '' | 0 | Client>): Promise<Client | any> {
@@ -28,8 +27,6 @@ export class OAuthModel {
       .catch(err => {
         callback(err);
       });
-
-    // return null;
   }
 
   grantTypeAllowed(clientID, grantType, callback) {
