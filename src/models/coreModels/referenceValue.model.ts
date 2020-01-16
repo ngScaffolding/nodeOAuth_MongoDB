@@ -1,7 +1,6 @@
 import { BaseEntity } from './baseEntity.model';
 
 export class ReferenceValue extends BaseEntity {
-
     // Used to store both name and seed in State Management. Not for users.
     compositeKey?: string;
 
@@ -26,6 +25,8 @@ export class ReferenceValue extends BaseEntity {
     valueProperty?: string;
     itemOrderProperty?: string;
     subtitleProperty?: string;
+    subtitle2Property?: string;
+    subtitle3Property?: string;
     metaProperty?: string;
 }
 
@@ -34,6 +35,7 @@ export class ReferenceValueItem {
     value: string;
     subtitle?: string;
     subtitle2?: string;
+    subtitle3?: string;
     itemOrder?: number;
     meta?: any;
 
@@ -46,5 +48,4 @@ export function createReferenceValue(params: Partial<ReferenceValue>) {
         name: '',
         value: null
     } as ReferenceValue;
-  }
-
+}

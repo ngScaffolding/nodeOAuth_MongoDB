@@ -9,8 +9,6 @@ import { IUserModel, Role, DocumentDBDataSource, IClientModel } from '../../mode
 require('dotenv').config();
 var winston = require('../../config/winston');
 
-const mongoose = require('mongoose');
-
 export class MongoDatabase implements IDataAccessLayer {
     private static _database: MongoDatabase;
     private mongoClient: MongoClient;
@@ -45,7 +43,7 @@ export class MongoDatabase implements IDataAccessLayer {
                 }
             );
 
-            // If the Node process ends, close the Mongoose connection
+            // If the Node process ends, close the mongoDb connection
             process.on('SIGINT', () => {
                 this.mongoClient.close(() => {
                     winston.info('mongoDb default connection disconnected through app termination');
