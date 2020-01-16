@@ -24,7 +24,7 @@ export class MongoDatabase implements IDataAccessLayer {
     constructor() {
         // Only run on mongodb Data Source
         if (process.env.DATA_SOURCE === 'mongodb') {
-            this.dbClientsTableName = process.env['DB_AUTH_DATABASE_NAME'] || 'oAuth_db';
+            this.dbDatabaseName = process.env['DB_AUTH_DATABASE_NAME'] || 'oAuth_db';
             this.dbClientsTableName = process.env['DB_AUTH_CLIENTS_TABLE'] || 'oAuthClients';
             this.dbUsersTableName = process.env['DB_AUTH_USERS_TABLE'] || 'oAuthUsers';
             this.dbRolesTableName = process.env['DB_AUTH_ROLES_TABLE'] || 'oAuthRoles';
@@ -32,9 +32,13 @@ export class MongoDatabase implements IDataAccessLayer {
             MongoClient.connect(process.env['DB_HOST']).then(
                 mongoClient => {
                     this.mongoClient = mongoClient;
-                    let mongodb = this.mongoClient.db(this.dbClientsTableName);
+                    this.mongoDb = this.mongoClient.db(this.dbDatabaseName);
 
                     winston.info('mongoDb default connection open');
+                    winston.info(`Database Name:${this.dbDatabaseName}`);
+                    winston.info(`Client Table Name:${this.dbClientsTableName}`);
+                    winston.info(`Roles Table Name:${this.dbRolesTableName}`);
+                    winston.info(`Users Table Name:${this.dbUsersTableName}`);
                 },
                 err => {
                     winston.error(err, `Error connecting to Mongodb`);
@@ -59,11 +63,11 @@ export class MongoDatabase implements IDataAccessLayer {
 
     public async getClientFromID(clientId: string, clientSecret: string = null): Promise<IClientModel> {
         if (clientSecret) {
-            return await this.mongoDb
+            return this.mongoDb
                 .collection(this.dbClientsTableName)
                 .findOne({ clientId: clientId, clientSecret: clientSecret });
         } else {
-            return await this.mongoDb.collection(this.dbClientsTableName).findOne({ clientId: clientId });
+            return this.mongoDb.collection(this.dbClientsTableName).findOne({ clientId: clientId });
         }
     }
 
@@ -89,7 +93,7 @@ export class MongoDatabase implements IDataAccessLayer {
     // //////////////////////////////////////////////////////////////////
     public async getUsers(): Promise<IUserModel[]> {
         return await this.mongoDb
-            .collection(this.dbClientsTableName)
+            .collection(this.dbUsersTableName)
             .find({})
             .toArray();
         // return new Promise<IUserModel[]>((resolve, reject) => {
@@ -104,7 +108,7 @@ export class MongoDatabase implements IDataAccessLayer {
     }
 
     public async getUserFromID(userId: string, password: string = null): Promise<IUserModel> {
-        return await this.mongoDb.collection(this.dbClientsTableName).findOne({ userId: userId });
+        return this.mongoDb.collection(this.dbUsersTableName).findOne({ userId: userId });
     }
 
     addUser(user: IUserModel) {
@@ -113,7 +117,7 @@ export class MongoDatabase implements IDataAccessLayer {
 
     updateUser(user: IUserModel) {
         this.mongoDb
-            .collection(this.dbClientsTableName)
+            .collection(this.dbUsersTableName)
             .findOneAndUpdate({ userId: user.userId }, user, {}, (error, doc) => {
                 var x = 0;
             });
@@ -125,7 +129,7 @@ export class MongoDatabase implements IDataAccessLayer {
         // Reset passwordLastFailed
 
         this.mongoDb
-            .collection(this.dbClientsTableName)
+            .collection(this.dbUsersTableName)
             .findOneAndUpdate(
                 { userId: userId },
                 { passwordFailures: 0, passwordLastFailed: null },
@@ -139,7 +143,7 @@ export class MongoDatabase implements IDataAccessLayer {
         // Increment passwordFailures
         // Set passwordLastFailed
 
-        let user = await this.mongoDb.collection(this.dbClientsTableName).findOne({ userId: userId });
+        let user = await this.mongoDb.collection(this.dbUsersTableName).findOne({ userId: userId });
         if (!user.passwordFailures) {
             user.passwordFailures = 0;
         }
@@ -150,7 +154,7 @@ export class MongoDatabase implements IDataAccessLayer {
         };
 
         this.mongoDb
-        .collection(this.dbClientsTableName).findOneAndUpdate(user, update, {}, (error, doc) => {});
+        .collection(this.dbUsersTableName).findOneAndUpdate(user, update, {}, (error, doc) => {});
     }
 }
 

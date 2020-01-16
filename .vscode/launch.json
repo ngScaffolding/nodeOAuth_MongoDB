@@ -8,7 +8,7 @@
         {
             "type": "node",
 			"request": "launch",
-			"name": "Launch Program OAuth",
+			"name": "debug",
 			"program": "${workspaceRoot}/dist/index.js",
 			"preLaunchTask": "npm: build:debug",
 			"outFiles": [
