@@ -1,167 +1,156 @@
 import * as fs from 'fs';
 import { join } from 'path';
-import { ConnectionOptions } from 'mongoose';
 
-import { IOAuthTokensModel, OAuthTokensModel } from './models/tokens.model';
-import { IOAuthUsersModel, OAuthUserModel } from './models/users.model';
-import { IOAuthClientModel, OAuthClientModel } from './models/clients.model';
+import { MongoClient, Db } from 'mongodb';
 
-import { IClientDataAccess, IUserDataAccess, IRoleDataAccess } from '../dataAccessLayer';
-import { IUserModel, Role } from '../../models/index';
-import { OAuthRoleModel } from './models/roles.model';
+import { IDataAccessLayer } from '../dataAccessLayer';
+import { IUserModel, Role, DocumentDBDataSource, IClientModel } from '../../models/index';
 
 require('dotenv').config();
 var winston = require('../../config/winston');
 
 const mongoose = require('mongoose');
 
-export class Database implements IClientDataAccess, IUserDataAccess, IRoleDataAccess {
-  private static _database: Database;
+export class MongoDatabase implements IDataAccessLayer {
+    private static _database: MongoDatabase;
+    private mongoClient: MongoClient;
+    private mongoDb: Db;
 
-  private constructor() {
-    // Only run on mongodb Data Source
-    if (process.env.DATA_SOURCE === 'mongodb') {
-      mongoose.Promise = global.Promise;
+    private dbDatabaseName: string;
+    private dbUsersTableName: string;
+    private dbClientsTableName: string;
+    private dbRolesTableName: string;
 
-      let options: ConnectionOptions = <ConnectionOptions>{
-        promiseLibrary: global.Promise,
-        useNewUrlParser: true
-      };
+    constructor() {
+        // Only run on mongodb Data Source
+        if (process.env.DATA_SOURCE === 'mongodb') {
+            this.dbClientsTableName = process.env['DB_AUTH_DATABASE_NAME'] || 'oAuth_db';
+            this.dbClientsTableName = process.env['DB_AUTH_CLIENTS_TABLE'] || 'oAuthClients';
+            this.dbUsersTableName = process.env['DB_AUTH_USERS_TABLE'] || 'oAuthUsers';
+            this.dbRolesTableName = process.env['DB_AUTH_ROLES_TABLE'] || 'oAuthRoles';
 
-      if (process.env.DB_PASS) {
-        winston.info(`Setting process.env.DB_USER: ${process.env.DB_USER}`);
-        options.user = process.env.DB_USER;
-      }
-      if (process.env.DB_PASS) {
-        winston.info(`Setting process.env.DB_PASS`);
-        options.pass = process.env.DB_PASS;
-      }
+            MongoClient.connect(process.env['DB_HOST']).then(
+                mongoClient => {
+                    this.mongoClient = mongoClient;
+                    let mongodb = this.mongoClient.db(this.dbClientsTableName);
 
-      if (process.env.DB_HOST) {
-        mongoose.connect(process.env.DB_HOST, options).catch((err: Error) => {
-          winston.error(err, `Error connecting to Mongodb`);
-        });
-      }
+                    winston.info('mongoDb default connection open');
+                },
+                err => {
+                    winston.error(err, `Error connecting to Mongodb`);
+                }
+            );
 
-      // When successfully connected
-      mongoose.connection.on('connected', () => {
-        winston.info('Mongoose default connection open to ', process.env.DB_HOST);
-      });
-
-      // If the connection throws an error
-      mongoose.connection.on('error', err => {
-        winston.error(err, 'Mongoose default connection error: ');
-      });
-
-      // When the connection is disconnected
-      mongoose.connection.on('disconnected', () => {
-        winston.error('Mongoose default connection disconnected');
-      });
-
-      // If the Node process ends, close the Mongoose connection
-      process.on('SIGINT', () => {
-        mongoose.connection.close(() => {
-          winston.info('Mongoose default connection disconnected through app termination');
-          process.exit(0);
-        });
-      });
-    }
-  }
-
-  static get instance() {
-    if (!Database._database) {
-      Database._database = new Database();
-    }
-    return Database._database;
-  }
-
-  initialise(): boolean {
-    winston.info('Connecting to Database');
-    return typeof Database.instance != 'undefined';
-  }
-
-  // //////////////////////////////////////////////////////////////////
-  //
-  // Client Section
-  //
-  // //////////////////////////////////////////////////////////////////
-
-  public async getClientFromID(clientId: string, clientSecret: string = null): Promise<IOAuthClientModel> {
-    if (clientSecret) {
-      return await OAuthClientModel.findOne({ clientId: clientId, clientSecret: clientSecret });
-    } else {
-      return await OAuthClientModel.findOne({ clientId: clientId });
-    }
-  }
-
-  // //////////////////////////////////////////////////////////////////
-  //
-  // Role Section
-  //
-  // //////////////////////////////////////////////////////////////////
-  public async getRole(name: string): Promise<Role> {
-    return await OAuthRoleModel.findOne({ name: name });
-  }
-  public async getAllRoles(): Promise<Role[]> {
-    return await OAuthRoleModel.find({});
-  }
-
-  // //////////////////////////////////////////////////////////////////
-  //
-  // User Section
-  //
-  // //////////////////////////////////////////////////////////////////
-  public async getUsers(): Promise<IUserModel[]> {
-    return new Promise<IUserModel[]>((resolve, reject) => {
-      var returnVal = [];
-      OAuthUserModel.find({}, (err, docs) => {
-        docs.forEach(doc => {
-          returnVal.push(doc);
-        });
-        resolve(returnVal);
-      });
-    });
-  }
-
-  public async getUserFromID(userId: string, password: string = null): Promise<IOAuthUsersModel> {
-    return await OAuthUserModel.findOne({ userId: userId });
-  }
-
-  addUser(user: IUserModel) {
-    throw new Error('Method not implemented.');
-  }
-
-  updateUser(user: IUserModel) {
-    OAuthUserModel.findOneAndUpdate({ userId: user.userId }, user, {}, (error, doc) => {
-      var x = 0;
-    });
-  }
-
-  // Fire and forget
-  public async userLoggedOn(userId: string) {
-    // Reset passwordFailures
-    // Reset passwordLastFailed
-
-    OAuthUserModel.findOneAndUpdate({ userId: userId }, { passwordFailures: 0, passwordLastFailed: null }, {}, (error, doc) => {});
-  }
-
-  // Fire and forget
-  public async userLogonFailed(userId: string) {
-    // Increment passwordFailures
-    // Set passwordLastFailed
-
-    let user = OAuthUserModel.findOne({ userId: userId });
-    if (!user.passwordFailures) {
-      user.passwordFailures = 0;
+            // If the Node process ends, close the Mongoose connection
+            process.on('SIGINT', () => {
+                this.mongoClient.close(() => {
+                    winston.info('mongoDb default connection disconnected through app termination');
+                    process.exit(0);
+                });
+            });
+        }
     }
 
-    let update = {
-      passwordFailures: user.passwordFailures + 1,
-      passwordLastFailed: new Date()
-    };
+    // //////////////////////////////////////////////////////////////////
+    //
+    // Client Section
+    //
+    // //////////////////////////////////////////////////////////////////
 
-    OAuthUserModel.findOneAndUpdate(user, update, {}, (error, doc) => {});
-  }
+    public async getClientFromID(clientId: string, clientSecret: string = null): Promise<IClientModel> {
+        if (clientSecret) {
+            return await this.mongoDb
+                .collection(this.dbClientsTableName)
+                .findOne({ clientId: clientId, clientSecret: clientSecret });
+        } else {
+            return await this.mongoDb.collection(this.dbClientsTableName).findOne({ clientId: clientId });
+        }
+    }
+
+    // //////////////////////////////////////////////////////////////////
+    //
+    // Role Section
+    //
+    // //////////////////////////////////////////////////////////////////
+    public async getRole(name: string): Promise<Role> {
+        return await this.mongoDb.collection(this.dbRolesTableName).findOne({ name: name });
+    }
+    public async getAllRoles(): Promise<Role[]> {
+        return await this.mongoDb
+            .collection(this.dbRolesTableName)
+            .find({})
+            .toArray();
+    }
+
+    // //////////////////////////////////////////////////////////////////
+    //
+    // User Section
+    //
+    // //////////////////////////////////////////////////////////////////
+    public async getUsers(): Promise<IUserModel[]> {
+        return await this.mongoDb
+            .collection(this.dbClientsTableName)
+            .find({})
+            .toArray();
+        // return new Promise<IUserModel[]>((resolve, reject) => {
+        //     var returnVal = [];
+        //     OAuthUserModel.find({}, (err, docs) => {
+        //         docs.forEach(doc => {
+        //             returnVal.push(doc);
+        //         });
+        //         resolve(returnVal);
+        //     });
+        // });
+    }
+
+    public async getUserFromID(userId: string, password: string = null): Promise<IUserModel> {
+        return await this.mongoDb.collection(this.dbClientsTableName).findOne({ userId: userId });
+    }
+
+    addUser(user: IUserModel) {
+        throw new Error('Method not implemented.');
+    }
+
+    updateUser(user: IUserModel) {
+        this.mongoDb
+            .collection(this.dbClientsTableName)
+            .findOneAndUpdate({ userId: user.userId }, user, {}, (error, doc) => {
+                var x = 0;
+            });
+    }
+
+    // Fire and forget
+    public async userLoggedOn(userId: string) {
+        // Reset passwordFailures
+        // Reset passwordLastFailed
+
+        this.mongoDb
+            .collection(this.dbClientsTableName)
+            .findOneAndUpdate(
+                { userId: userId },
+                { passwordFailures: 0, passwordLastFailed: null },
+                {},
+                (error, doc) => {}
+            );
+    }
+
+    // Fire and forget
+    public async userLogonFailed(userId: string) {
+        // Increment passwordFailures
+        // Set passwordLastFailed
+
+        let user = await this.mongoDb.collection(this.dbClientsTableName).findOne({ userId: userId });
+        if (!user.passwordFailures) {
+            user.passwordFailures = 0;
+        }
+
+        let update = {
+            passwordFailures: user.passwordFailures + 1,
+            passwordLastFailed: new Date()
+        };
+
+        this.mongoDb
+        .collection(this.dbClientsTableName).findOneAndUpdate(user, update, {}, (error, doc) => {});
+    }
 }
 
-export const DB = Database.instance;

@@ -1,5 +1,5 @@
 import { IDataAccessLayer  } from './dataSources/dataAccessLayer';
-import { MongoDBDataAccess } from './dataSources/mongodb';
+import { MongoDatabase } from './dataSources/mongodb/database.mongodb';
 import { AzureStorageDataAccess } from './dataSources/azureStorage';
 import { MsSQLDataAccess } from './dataSources/mssql/msSQLDataAccess';
 // import { DocumentDBDataAccess } from './dataSources/documentdb';
@@ -20,7 +20,7 @@ class DataSourceSwitch {
         switch(process.env.DATA_SOURCE.toLowerCase()){
             case 'mongodb':{
                 winston.info('Running MongoDB Data Source');
-                this.dataSource = new MongoDBDataAccess();
+                this.dataSource = new MongoDatabase();
                 break;
             }
             case 'azurestorage':{
