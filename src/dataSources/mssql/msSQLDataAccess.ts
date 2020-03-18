@@ -78,9 +78,12 @@ export class MsSQLDataAccess implements IDataAccessLayer {
           });
         });
   }
+
   addUser(user: IUserModel) {
-    throw new Error('Method not implemented.');
+    this.runCommand(`INSERT INTO [dbo].[${this.tablePrefix}OAuthUsers] ([UserID],[Value])
+        VALUES (${MSSQLHelpers.valueWithQuotesOrNull(user.userId)},${MSSQLHelpers.valueWithQuotesOrNull(JSON.stringify(user))})`);
   }
+  
   updateUser(user: IUserModel) {
     
     this.runCommand(`UPDATE [dbo].[${this.tablePrefix}OAuthUsers]

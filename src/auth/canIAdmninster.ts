@@ -9,7 +9,12 @@ export default function canIAdminister(me: IUserModel, userToAdminister: IUserMo
     var dataAccess = DataSourceSwitch.default.dataSource;
 
     if (me.userId === userToAdminister.userId) {
-      // It's me!
+      // It's a me!
+      resolve(true);
+    }
+
+    if (me.roles.some(role => role === 'admin')) {
+      // I'm the daddy
       resolve(true);
     }
 

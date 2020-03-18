@@ -65,11 +65,18 @@ export class UserRouter {
   }
   public async deleteUser(req: Request, res: Response, next: NextFunction) {
   }
+  
   public async addUser(req: Request, res: Response, next: NextFunction) {
     var userDetails = req['userDetails'] as IUserModel;
     var dataAccess = DataSourceSwitch.default.dataSource;
 
     var newUser = req.body as IUserModel;
+
+    // Properly encode password
+    newUser.salt = PasswordHelper.generateSalt();
+    newUser.password = PasswordHelper.encodePassword(newUser.password, newUser.salt);
+    newUser.passwordFailures = 0;
+    newUser.passwordLastFailed = null;
 
     if (await canIAdminister(userDetails, newUser, true)) {
       dataAccess.addUser(newUser);
@@ -77,6 +84,7 @@ export class UserRouter {
       res.status(401).send({ message: 'Not Authorised to create for User' });
     }
   }
+
   public async updateUser(req: Request, res: Response, next: NextFunction) {
     var userDetails = req['userDetails'] as IUserModel;
     var dataAccess = DataSourceSwitch.default.dataSource;
