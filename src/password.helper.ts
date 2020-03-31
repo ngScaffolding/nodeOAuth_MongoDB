@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 export class PasswordHelper {
   public static encodePassword(password: string, salt: string): string {

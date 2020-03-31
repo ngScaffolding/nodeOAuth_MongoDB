@@ -155,7 +155,7 @@ export class OAuthModel {
     var user = req.user;
 
     var payload = {
-      roles: user.roles,
+      role: user.role,
       firstName: user.firstname,
       lastName: user.lastname,
       email: user.email
