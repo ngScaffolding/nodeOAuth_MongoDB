@@ -13,7 +13,7 @@ export default function canIAdminister(me: IUserModel, userToAdminister: IUserMo
       resolve(true);
     }
 
-    if (me.roles.some(role => role === 'admin')) {
+    if (me.role.some(role => role === 'admin')) {
       // I'm the daddy
       resolve(true);
     }
@@ -23,7 +23,7 @@ export default function canIAdminister(me: IUserModel, userToAdminister: IUserMo
 
       var authorisedMatches = 0;
 
-      for(const myRole of me.roles){
+      for(const myRole of me.role){
         if (myRole === 'admin' || myRole === 'user_admin') {
           authorisedMatches++;
         }
