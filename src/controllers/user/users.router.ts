@@ -5,170 +5,174 @@ import getAdminRolesForUser from '../../auth/getAdminRolesForUser';
 import canIAdminister from '../../auth/canIAdmninster';
 import { PasswordHelper } from '../../password.helper';
 
-
 const winston = require('../../config/winston');
 
 var DataSourceSwitch = require('../../dataSourceSwitch');
 
 export class UserRouter {
-  router: Router;
-  private dataAccess: IDataAccessLayer;
+    router: Router;
+    private dataAccess: IDataAccessLayer;
 
-  constructor() {
-    this.router = Router();
-    this.init();
+    constructor() {
+        this.router = Router();
+        this.init();
 
-    this.dataAccess = DataSourceSwitch.default as IDataAccessLayer;
-  }
-
-  public async getAll(req: Request, res: Response, next: NextFunction) {
-    var userDetails = req['userDetails'] as IUserModel;
-
-    if (!userDetails) {
-      res.sendStatus(401);
-      return;
+        this.dataAccess = DataSourceSwitch.default as IDataAccessLayer;
     }
 
-    var dataAccess = DataSourceSwitch.default.dataSource;
+    public async getAll(req: Request, res: Response, next: NextFunction) {
+        var userDetails = req['userDetails'] as IUserModel;
 
-    const users = await dataAccess.getUsers();
+        if (!userDetails) {
+            res.sendStatus(401);
+            return;
+        }
 
-    var returnedUsers: IUserModel[] = [];
+        var dataAccess = DataSourceSwitch.default.dataSource;
 
-    for(const user of users) {
-    var canAdminister = await canIAdminister(userDetails, user);
+        const users = await dataAccess.getUsers();
 
-    if (canAdminister) {
-        user.password = null;
-        user.salt = null;
-        returnedUsers.push(user);
-      }
-    };
+        var returnedUsers: IUserModel[] = [];
 
-    res.json(returnedUsers);
-  }
+        for (const user of users) {
+            var canAdminister = await canIAdminister(userDetails, user);
 
-  public async getUserFromId(req: Request, res: Response, next: NextFunction) {
-    var userDetails = req['userDetails'] as IUserModel;
-    const id = req.query.id;
+            if (canAdminister) {
+                user.password = null;
+                user.salt = null;
+                returnedUsers.push(user);
+            }
+        }
 
-    var dataAccess = DataSourceSwitch.default.dataSource;
-
-    const loadedUser = await dataAccess.getUserFromID(id);
-
-    // Check if I can Administer this user or Is it me?
-    if (await canIAdminister(userDetails, loadedUser)) {
-      res.json(loadedUser);
-    } else {
-      res.status(401).send({ message: 'Not Authorised for User' });
-    }
-  }
-  public async deleteUser(req: Request, res: Response, next: NextFunction) {
-  }
-  
-  public async addUser(req: Request, res: Response, next: NextFunction) {
-    var userDetails = req['userDetails'] as IUserModel;
-    var dataAccess = DataSourceSwitch.default.dataSource;
-
-    var newUser = req.body as IUserModel;
-
-    // Properly encode password
-    newUser.salt = PasswordHelper.generateSalt();
-    newUser.password = PasswordHelper.encodePassword(newUser.password, newUser.salt);
-    newUser.passwordFailures = 0;
-    newUser.passwordLastFailed = null;
-
-    if (await canIAdminister(userDetails, newUser, true)) {
-      dataAccess.addUser(newUser);
-    } else {
-      res.status(401).send({ message: 'Not Authorised to create for User' });
-    }
-  }
-
-  public async updateUser(req: Request, res: Response, next: NextFunction) {
-    var userDetails = req['userDetails'] as IUserModel;
-    var dataAccess = DataSourceSwitch.default.dataSource;
-
-    var newUser = req.body as IUserModel;
-
-    if (await canIAdminister(userDetails, newUser, true)) {
-      dataAccess.addUser(newUser);
-    } else {
-      res.status(401).send({ message: 'Not Authorised to create for User' });
-    }
-  }
-  public async registerUser(req: Request, res: Response, next: NextFunction) {}
-  public async resetPassword(req: Request, res: Response, next: NextFunction) {}
-
-  public async confirmUser(req: Request, res: Response, next: NextFunction) {}
-  public async changePassword(req: Request, res: Response, next: NextFunction) {
-    
-    var userDetails = req['userDetails'] as IUserModel;
-    let changeRequest = req.body as ChangePasswordModel;
-    // Get the existing user
-    var dataAccess = DataSourceSwitch.default.dataSource;
-
-    const loadedUser: IUserModel = await dataAccess.getUserFromID(changeRequest.userId);
-
-    // Can I administer or is it me?
-    if(! await canIAdminister(userDetails, loadedUser)){
-      res.status(400).send({ message: 'Not Authorised to Change Password' });
-      next({ message: 'Not Authorised to Change Password' });
-      return;
-    }
-    // Is valid current password
-    let encPassword = PasswordHelper.encodePassword(changeRequest.currentPassword, loadedUser.salt);
-    if(encPassword !== loadedUser.password){
-      res.status(400).send({ message: 'Incorrect current Password' });
-      next({ message: 'Incorrect current Password' });
-      return;
+        res.json(returnedUsers);
     }
 
-    // Change Password to encoded
-    loadedUser.salt = PasswordHelper.generateSalt();
-    loadedUser.password = PasswordHelper.encodePassword(changeRequest.newPassword, loadedUser.salt);
-    loadedUser.passwordFailures = 0;
-    loadedUser.passwordLastFailed = null;
+    public async getUserFromId(req: Request, res: Response, next: NextFunction) {
+        var userDetails = req['userDetails'] as IUserModel;
+        const id = req.query.id;
 
-    // Save User
-    dataAccess.updateUser(loadedUser);
-    res.status(200).send({ message: 'Password Changed' });
-    next();
-  }
+        var dataAccess = DataSourceSwitch.default.dataSource;
 
-  public async setPassword(req: Request, res: Response, next: NextFunction) {}
+        const loadedUser = await dataAccess.getUserFromID(id);
 
-  init() {
-    // Get Users
-    this.router.get('/', this.getAll);
+        // Check if I can Administer this user or Is it me?
+        if (await canIAdminister(userDetails, loadedUser)) {
+            res.json(loadedUser);
+        } else {
+            res.status(401).send({ message: 'Not Authorised for User' });
+        }
+    }
+    public async deleteUser(req: Request, res: Response, next: NextFunction) {}
 
-    // Get User
-    this.router.get('/:id', this.getUserFromId);
+    public async addUser(req: Request, res: Response, next: NextFunction) {
+        var userDetails = req['userDetails'] as IUserModel;
+        var dataAccess = DataSourceSwitch.default.dataSource;
 
-    // Create User
-    this.router.post('/', this.addUser);
+        var newUser = req.body as IUserModel;
 
-    // Delete User
-    this.router.delete('/:id', this.deleteUser);
+        // Properly encode password
+        newUser.salt = PasswordHelper.generateSalt();
+        newUser.password = PasswordHelper.encodePassword(newUser.password, newUser.salt);
+        newUser.passwordFailures = 0;
+        newUser.passwordLastFailed = null;
 
-    // Update User
-    this.router.patch('/', this.updateUser);
+        if (await canIAdminister(userDetails, newUser, true)) {
+            dataAccess.addUser(newUser);
+        } else {
+            res.status(401).send({ message: 'Not Authorised to create for User' });
+        }
+    }
 
-    // register User
-    this.router.post('/register', this.registerUser);
+    public async updateUser(req: Request, res: Response, next: NextFunction) {
+        var userDetails = req['userDetails'] as IUserModel;
+        var dataAccess = DataSourceSwitch.default.dataSource;
 
-    // reset Password
-    this.router.get('/resetPassword/:id', this.resetPassword);
+        var newUser = req.body as IUserModel;
 
-    // Confirm Registration
-    this.router.get('/confirm/:id', this.confirmUser);
+        if (await canIAdminister(userDetails, newUser, true)) {
+            dataAccess
+                .updateUser(newUser)
+                .then(result => {
+                    res.json(result);
+                })
+                .catch(err => {
+                    res.status(500).send({ message: 'Failed to Update User' });
+                });
+        } else {
+            res.status(401).send({ message: 'Not Authorised to create for User' });
+        }
+    }
+    public async registerUser(req: Request, res: Response, next: NextFunction) {}
+    public async resetPassword(req: Request, res: Response, next: NextFunction) {}
 
-    // Set Password (For Admin)
-    this.router.post('/setPassword', this.setPassword);
+    public async confirmUser(req: Request, res: Response, next: NextFunction) {}
+    public async changePassword(req: Request, res: Response, next: NextFunction) {
+        var userDetails = req['userDetails'] as IUserModel;
+        let changeRequest = req.body as ChangePasswordModel;
+        // Get the existing user
+        var dataAccess = DataSourceSwitch.default.dataSource;
 
-    // Change Password (For the User)
-    this.router.post('/changePassword', this.changePassword);
-  }
+        const loadedUser: IUserModel = await dataAccess.getUserFromID(changeRequest.userId);
+
+        // Can I administer or is it me?
+        if (!(await canIAdminister(userDetails, loadedUser))) {
+            res.status(400).send({ message: 'Not Authorised to Change Password' });
+            next({ message: 'Not Authorised to Change Password' });
+            return;
+        }
+        // Is valid current password
+        let encPassword = PasswordHelper.encodePassword(changeRequest.currentPassword, loadedUser.salt);
+        if (encPassword !== loadedUser.password) {
+            res.status(400).send({ message: 'Incorrect current Password' });
+            next({ message: 'Incorrect current Password' });
+            return;
+        }
+
+        // Change Password to encoded
+        loadedUser.salt = PasswordHelper.generateSalt();
+        loadedUser.password = PasswordHelper.encodePassword(changeRequest.newPassword, loadedUser.salt);
+        loadedUser.passwordFailures = 0;
+        loadedUser.passwordLastFailed = null;
+
+        // Save User
+        dataAccess.updateUser(loadedUser);
+        res.status(200).send({ message: 'Password Changed' });
+        next();
+    }
+
+    public async setPassword(req: Request, res: Response, next: NextFunction) {}
+
+    init() {
+        // Get Users
+        this.router.get('/', this.getAll);
+
+        // Get User
+        this.router.get('/:id', this.getUserFromId);
+
+        // Create User
+        this.router.post('/', this.addUser);
+
+        // Delete User
+        this.router.delete('/:id', this.deleteUser);
+
+        // Update User
+        this.router.patch('/', this.updateUser);
+
+        // register User
+        this.router.post('/register', this.registerUser);
+
+        // reset Password
+        this.router.get('/resetPassword/:id', this.resetPassword);
+
+        // Confirm Registration
+        this.router.get('/confirm/:id', this.confirmUser);
+
+        // Set Password (For Admin)
+        this.router.post('/setPassword', this.setPassword);
+
+        // Change Password (For the User)
+        this.router.post('/changePassword', this.changePassword);
+    }
 }
 
 const userRouter = new UserRouter().router;

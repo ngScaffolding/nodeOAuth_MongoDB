@@ -80,13 +80,13 @@ export class MsSQLDataAccess implements IDataAccessLayer {
   }
 
   addUser(user: IUserModel) {
-    this.runCommand(`INSERT INTO [dbo].[${this.tablePrefix}OAuthUsers] ([UserID],[Value])
+    return this.runCommand(`INSERT INTO [dbo].[${this.tablePrefix}OAuthUsers] ([UserID],[Value])
         VALUES (${MSSQLHelpers.valueWithQuotesOrNull(user.userId)},${MSSQLHelpers.valueWithQuotesOrNull(JSON.stringify(user))})`);
   }
   
   updateUser(user: IUserModel) {
     
-    this.runCommand(`UPDATE [dbo].[${this.tablePrefix}OAuthUsers]
+    return this.runCommand(`UPDATE [dbo].[${this.tablePrefix}OAuthUsers]
             SET [Value] = ${MSSQLHelpers.valueWithQuotesOrNull(JSON.stringify(user))}
             WHERE [UserID] = ${MSSQLHelpers.valueWithQuotesOrNull(user.userId)}`);
   }
