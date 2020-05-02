@@ -5,7 +5,6 @@ import getAdminRolesForUser from '../../auth/getAdminRolesForUser';
 import canIAdminister from '../../auth/canIAdmninster';
 import { PasswordHelper } from '../../password.helper';
 
-
 const winston = require('../../config/winston');
 
 var DataSourceSwitch = require('../../dataSourceSwitch');
@@ -43,7 +42,7 @@ export class UserRouter {
         user.salt = null;
         returnedUsers.push(user);
       }
-    };
+        }
 
     res.json(returnedUsers);
   }
@@ -64,6 +63,24 @@ export class UserRouter {
     }
   }
   public async deleteUser(req: Request, res: Response, next: NextFunction) {
+        const userid = req.params.userid;
+        var userDetails = req['userDetails'] as IUserModel;
+
+        var dataAccess = DataSourceSwitch.default.dataSource;
+        const loadedUser = await dataAccess.getUserFromID(userid);
+
+        if (await canIAdminister(userDetails, loadedUser, true)) {
+            dataAccess
+                .deleteUser(userid)
+                .then(result => {
+                    res.json(result);
+                })
+                .catch(err => {
+                    res.status(500).send({ message: 'Failed to Delete User' });
+                });
+        } else {
+            res.status(401).send({ message: 'Not Authorised to create for User' });
+        }
   }
   
   public async addUser(req: Request, res: Response, next: NextFunction) {
@@ -92,7 +109,14 @@ export class UserRouter {
     var newUser = req.body as IUserModel;
 
     if (await canIAdminister(userDetails, newUser, true)) {
-      dataAccess.addUser(newUser);
+            dataAccess
+                .updateUser(newUser)
+                .then(result => {
+                    res.json(result);
+                })
+                .catch(err => {
+                    res.status(500).send({ message: 'Failed to Update User' });
+                });
     } else {
       res.status(401).send({ message: 'Not Authorised to create for User' });
     }
@@ -102,7 +126,6 @@ export class UserRouter {
 
   public async confirmUser(req: Request, res: Response, next: NextFunction) {}
   public async changePassword(req: Request, res: Response, next: NextFunction) {
-    
     var userDetails = req['userDetails'] as IUserModel;
     let changeRequest = req.body as ChangePasswordModel;
     // Get the existing user
@@ -111,7 +134,7 @@ export class UserRouter {
     const loadedUser: IUserModel = await dataAccess.getUserFromID(changeRequest.userId);
 
     // Can I administer or is it me?
-    if(! await canIAdminister(userDetails, loadedUser)){
+        if (!(await canIAdminister(userDetails, loadedUser))) {
       res.status(400).send({ message: 'Not Authorised to Change Password' });
       next({ message: 'Not Authorised to Change Password' });
       return;
@@ -149,7 +172,7 @@ export class UserRouter {
     this.router.post('/', this.addUser);
 
     // Delete User
-    this.router.delete('/:id', this.deleteUser);
+        this.router.delete('/:userid', this.deleteUser);
 
     // Update User
     this.router.patch('/', this.updateUser);

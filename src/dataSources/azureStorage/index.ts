@@ -4,6 +4,9 @@ import { Role, IUserModel, IClientModel } from '../../models/index';
 var azure = require('azure-storage');
 
 export class AzureStorageDataAccess implements IDataAccessLayer {
+  deleteUser(userId: string) {
+    throw new Error("Method not implemented.");
+  }
   getRole(name: string): Promise<Role> {
     var tableService = azure.createTableService();
 

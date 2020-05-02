@@ -8,4 +8,5 @@ export interface IUserDataAccess {
     getUsers(): Promise<IUserModel[]>;
     addUser(user: IUserModel);
     updateUser(user: IUserModel);
+    deleteUser(userId: string);
 }

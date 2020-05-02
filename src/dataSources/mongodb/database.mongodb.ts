@@ -52,6 +52,9 @@ export class MongoDatabase implements IDataAccessLayer {
             });
         }
     }
+    deleteUser(userId: string) {
+        throw new Error("Method not implemented.");
+    }
 
     // //////////////////////////////////////////////////////////////////
     //
