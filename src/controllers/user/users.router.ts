@@ -89,14 +89,17 @@ export class UserRouter {
 
         var newUser = req.body as IUserModel;
 
-        // Properly encode password
-        newUser.salt = PasswordHelper.generateSalt();
-        newUser.password = PasswordHelper.encodePassword(newUser.password, newUser.salt);
-        newUser.passwordFailures = 0;
-        newUser.passwordLastFailed = null;
+        this.setUsersPassword(newUser, newUser.password);
 
         if (await canIAdminister(userDetails, newUser, true)) {
-            dataAccess.addUser(newUser);
+            dataAccess
+                .addUser(newUser)
+                .then(result => {
+                    res.json(result);
+                })
+                .catch(err => {
+                    res.status(500).send({ message: 'Failed to Add User' });
+                });
         } else {
             res.status(401).send({ message: 'Not Authorised to create for User' });
         }
@@ -147,11 +150,7 @@ export class UserRouter {
             return;
         }
 
-        // Change Password to encoded
-        loadedUser.salt = PasswordHelper.generateSalt();
-        loadedUser.password = PasswordHelper.encodePassword(changeRequest.newPassword, loadedUser.salt);
-        loadedUser.passwordFailures = 0;
-        loadedUser.passwordLastFailed = null;
+        this.setUsersPassword(loadedUser, changeRequest.newPassword);
 
         // Save User
         dataAccess.updateUser(loadedUser);
@@ -159,7 +158,35 @@ export class UserRouter {
         next();
     }
 
-    public async setPassword(req: Request, res: Response, next: NextFunction) {}
+    setUsersPassword = (user: any, newPassword: string): void => {
+        // Change Password to encoded
+        user.salt = PasswordHelper.generateSalt();
+        user.password = PasswordHelper.encodePassword(newPassword, user.salt);
+        user.passwordFailures = 0;
+        user.passwordLastFailed = null;
+    };
+
+    setPassword = async (req: Request, res: Response, next: NextFunction) => {
+        var userDetails = req['userDetails'] as IUserModel;
+        let changeRequest = req.body as ChangePasswordModel;
+        // Get the existing user
+        var dataAccess = DataSourceSwitch.default.dataSource;
+
+        const loadedUser: IUserModel = await dataAccess.getUserFromID(changeRequest.userId);
+
+        // Can I administer or is it me?
+        if (!(await canIAdminister(userDetails, loadedUser))) {
+            res.status(400).send({ message: 'Not Authorised to Change Password' });
+            next({ message: 'Not Authorised to Change Password' });
+            return;
+        }
+        this.setUsersPassword(loadedUser, changeRequest.newPassword);
+
+        // Save User
+        dataAccess.updateUser(loadedUser);
+        res.status(200).send({ message: 'Password Changed' });
+        next();
+    };
 
     init() {
         // Get Users

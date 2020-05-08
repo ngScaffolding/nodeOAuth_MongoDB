@@ -1,0 +1,17 @@
+{
+  "name": "ngscaffolding-models",
+  "version": "1.0.140",
+  "description": "ngScaffolding Models",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "author": "dbaines1@hotmail.com",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@angular/core": "^7.2.14",
+    "@types/highcharts": "^5.0.22",
+    "angular-highcharts": "^6.2.6",
+    "highcharts": "^6.0.7",
+    "rxjs": "^6.3.3"
+  }
+}
