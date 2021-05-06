@@ -11,7 +11,7 @@
     "@angular/core": "^7.2.14",
     "@types/highcharts": "^5.0.22",
     "angular-highcharts": "^6.2.6",
-    "highcharts": "^6.0.7",
+    "highcharts": "^9.0.0",
     "rxjs": "^6.3.3"
   }
 }
